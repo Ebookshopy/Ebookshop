@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EbookShop — Ebooks et Formations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+body{background:#1f3d2e;color:#fff;line-height:1.6;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+header{position:fixed;top:0;left:0;width:100%;background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);border-bottom:2px solid #ffeb3b;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:2em;font-weight:700;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav li{margin-left:15px;}
+nav a{color:#fff;text-decoration:none;font-weight:700;letter-spacing:0.5px;transition:0.25s;}
+nav a:hover{color:#ffeb3b;}
+#cartIcon{position:relative;background:#ffeb3b;color:#000;padding:12px 14px;border-radius:12px;font-size:1.1em;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);transition:0.2s;margin-left:10px;}
+#cartIcon:hover{transform:scale(1.05);}
+#cartCount{font-weight:700;margin-left:6px;}
+main{padding-top:120px;}
+.hero{background:linear-gradient(135deg, rgba(0,0,0,.55), rgba(0,0,0,.15));border-radius:22px;padding:34px 20px;margin:24px 0 18px;box-shadow:0 14px 30px rgba(0,0,0,.45);text-align:center;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.6em;margin-bottom:10px;}
+.hero p{max-width:860px;margin:0 auto 18px;font-size:1.1em;opacity:.95;}
+.btn{display:inline-block;padding:12px 18px;border-radius:999px;font-weight:800;text-decoration:none;border:0;cursor:pointer;background:#ffeb3b;color:#000;transition:transform .18s, background .18s;}
+.btn:hover{background:#fff;transform:scale(1.03);}
+.section-title{font-family:'Playfair Display',serif;font-size:2.1em;text-align:center;margin:14px 0;}
+.section-sub{max-width:920px;margin:0 auto 18px;text-align:center;opacity:.9;}
+.grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;}
+.card{width:280px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:16px;box-shadow:0 12px 24px rgba(0,0,0,.35);backdrop-filter:blur(8px);text-align:center;transition: transform .3s, box-shadow .3s;}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(0,0,0,.45);}
+.card h3{font-family:'Playfair Display',serif;font-size:1.35em;margin:8px 0;}
+.price{font-weight:800;margin:6px 0 10px;}
+.pack-section{margin:30px 0;padding:20px;background:rgba(255,255,255,.08);border-radius:18px;text-align:center;}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;justify-content:center;align-items:center;padding:20px;z-index:2000;}
+.panel{width:min(520px,95%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;backdrop-filter:blur(10px);box-shadow:0 18px 38px rgba(0,0,0,.5);text-align:center;overflow-y:auto;max-height:90vh;}
+#cartList{list-style:none;padding:0;margin-bottom:12px;}
+#cartList li{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;background:rgba(255,255,255,.1);padding:6px 10px;border-radius:8px;}
+#cartTotal{font-weight:700;margin-bottom:12px;}
+#checkoutBtn{margin-bottom:12px;}
+#closeCart{margin-bottom:12px;}
+#paymentForm input,#paymentForm select{width:100%;padding:10px;border-radius:10px;border:none;margin-top:6px;outline:none;}
+footer{margin-top:46px;text-align:center;padding:18px;background:rgba(0,0,0,.6);}
+footer a{color:#ffeb3b;text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.small{font-size:.9em;opacity:.9;margin-top:6px;}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div class="logo">📚 EbookShop </div>
+  <nav>
+    <ul>
+      <li><a href="#home">Accueil</a></li>
+      <li><a href="#ebooks">Ebooks</a></li>
+      <li><a href="#products">Formations</a></li>
+    </ul>
+  </nav>
+  <div id="cartIcon">🛒 <span id="cartCount">0</span></div>
+</header>
+
+<main>
+<section id="home" class="hero">
+  <h1>Ebooks et Formations</h1>
+  <p>Choisis ton ebook, ta formation ou pack et ajoute-les au panier. Patiente 2 à 4h pour recevoir ton contenu après paiement.
+
+Objectif ODB : génère tes premiers dollars grâce à la formation ODB Méthode, avec la KMF (Kyllian Méthode Facile) !
+</p>
+</section>
+
+<section id="ebooks">
+  <div class="section-title">Nos Ebooks</div>
+  <div class="section-sub">Clique sur "Ajouter au panier" pour sélectionner.</div>
+  <div class="grid" id="ebooksGrid"></div>
+</section>
+
+<section id="products">
+  <div class="section-title">Nos Formations</div>
+  <div class="section-sub">Clique sur "Ajouter au panier" pour sélectionner.</div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<section class="pack-section">
+  <h2>Pack Complet : Ebook + Formation</h2>
+  <p>Profite du pack complet pour chaque domaine.</p>
+  <div class="grid" id="packGrid"></div>
+</section>
+</main>
+
+<!-- PANIER -->
+<div id="cartOverlay" class="overlay">
+  <div class="panel">
+    <h2>Panier 🛒</h2>
+    <ul id="cartList"></ul>
+    <div id="cartTotal"></div>
+    <button class="btn" id="checkoutBtn">Passer au paiement</button>
+    <button class="btn" id="closeCart" style="background:#fff;color:#000;">Fermer</button>
+  </div>
+</div>
+
+<!-- PAGE DE PAIEMENT -->
+<div id="paymentOverlay" class="overlay">
+  <div class="panel">
+    <h2>Paiement Crypto</h2>
+    <form id="paymentForm">
+      <input type="text" id="clientName" placeholder="Nom complet" required/>
+      <input type="email" id="clientEmail" placeholder="Email" required/>
+      <input type="text" id="clientWhatsapp" placeholder="Numéro WhatsApp" required/>
+
+      <label>Choisis ta crypto :</label>
+      <div id="cryptoContainer" style="display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;"></div>
+
+      <div id="selectedCryptoInfo" style="margin:12px 0;display:none;">
+        <div id="cryptoAmountDisplay" style="margin-bottom:6px;font-weight:700;"></div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="text" id="cryptoAddressDisplay" readonly style="flex:1;padding:6px;border-radius:8px;border:none;"/>
+          <button type="button" class="btn" id="copyAddressBtn" style="padding:6px 10px;">Copier</button>
+        </div>
+      </div>
+
+      <label>Après paiement, colle ton TXID :</label>
+      <input type="text" id="txidInput" placeholder="TXID"/>
+      <button type="submit" class="btn">Confirmer le paiement</button>
+    </form>
+    <button class="btn" id="closePayment" style="margin-top:12px;background:#fff;color:#000;">Fermer</button>
+  </div>
+</div>
+
+<footer>
+    Pourquoi choisir nos ebooks et    formations ?
+   Nos ebooks te donnent les bases,     
+
+nos formations te montrent comment les appliquer. Avec le pack complet, tu combines théorie et pratique, tu gagnes du temps et de l’argent, et tu progresses plus vite. Tout est pensé pour apprendre facilement et passer à l’action immédiatement.
+
+  <p>&copy; 2025 EbookShop — Tous droits réservés.</p>
+  <p><a href="#">Conditions d'utilisation</a> | <a href="#">Mentions légales</a> | <a href="#">Politique de confidentialité</a></p>
+</footer>
+
+<!-- EMAILJS (INTÉGRATION) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+<script>
+/* ======== EMAILJS CONFIG (TES DONNÉES) ======== */
+emailjs.init("MMO4RURIJnsEOY140"); // Public Key
+
+const PRODUCTS = [
+  {id:"marketing", name:"Marketing Digital", ebook:"marketing.pdf", formation:"marketing-formation.pdf", price:39.99},
+  {id:"ofm-ia", name:"OFM IA", ebook:"ofm-ia.pdf", formation:"ofm-ia-formation.pdf", price:69.99}
+];
+
+const ADDRESSES = {ETH: "0xd4Fbc12bA94496eB13D968e575C9f03380bE4F48", BTC:"bc1qsyn0jp2nzmp2kx65kscnttmhvruq5v2hl0jwra", SOL:"3FVzZ3W2HZ7PaHN9EoWMeA5Pm4A94GyG7R6QWpYiUGRb", TRX:"TKHvwB5vDXAUJwYDZ8SJeYifZZX33fP6PA"};
+const RATES = {ETH:1500, BTC:25000, SOL:100, TRX:0.06};
+
+let cart = [];
+
+const ebooksGrid = document.getElementById("ebooksGrid");
+const productGrid = document.getElementById("productGrid");
+const packGrid = document.getElementById("packGrid");
+const cartOverlay = document.getElementById("cartOverlay");
+const cartList = document.getElementById("cartList");
+const cartTotal = document.getElementById("cartTotal");
+const checkoutBtn = document.getElementById("checkoutBtn");
+const closeCart = document.getElementById("closeCart");
+const cartIcon = document.getElementById("cartIcon");
+const cartCount = document.getElementById("cartCount");
+const paymentOverlay = document.getElementById("paymentOverlay");
+const cryptoContainer = document.getElementById("cryptoContainer");
+const selectedCryptoInfo = document.getElementById("selectedCryptoInfo");
+const cryptoAmountDisplay = document.getElementById("cryptoAmountDisplay");
+const cryptoAddressDisplay = document.getElementById("cryptoAddressDisplay");
+const copyAddressBtn = document.getElementById("copyAddressBtn");
+const paymentForm = document.getElementById("paymentForm");
+const closePayment = document.getElementById("closePayment");
+
+let selectedCrypto = "";
+
+// Render produits
+function renderProducts(){
+  ebooksGrid.innerHTML=""; productGrid.innerHTML=""; packGrid.innerHTML="";
+  PRODUCTS.forEach(p=>{
+    const types=[{label:"Ebook",type:"ebook",price:p.price},{label:"Formation",type:"formation",price:p.price*1.2},{label:"Pack Complet",type:"pack",price:p.price*1.5}];
+    types.forEach(t=>{
+      const card=document.createElement("div"); card.className="card";
+      card.innerHTML=`<h3>${p.name} ${t.label!=="Pack Complet"?'':'- Pack Complet'}</h3><div class="price">${t.price.toFixed(2)} €</div><button class="btn addCart" data-id="${p.id}" data-type="${t.type}">Ajouter au panier</button>`;
+      if(t.type==="ebook") ebooksGrid.appendChild(card);
+      else if(t.type==="formation") productGrid.appendChild(card);
+      else packGrid.appendChild(card);
+    });
+  });
+  document.querySelectorAll(".addCart").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const id=btn.dataset.id,type=btn.dataset.type;
+      const prod=PRODUCTS.find(x=>x.id===id);
+      cart.push({...prod,type});
+      cartCount.textContent = cart.length;
+      renderCartList();
+      alert("Ajouté au panier veuillez passer au paiment ");
+    });
+  });
+}
+
+// Render panier
+function renderCartList(){
+  cartList.innerHTML="";
+  let total=0;
+  cart.forEach((item,index)=>{
+    let price=item.type==="pack"?item.price*1.5:item.type==="formation"?item.price*1.2:item.price;
+    total+=price;
+    const li=document.createElement("li");
+    li.innerHTML=`<span>${item.name} (${item.type}) - ${price.toFixed(2)}€</span><button class="btn" style="background:red;color:#fff;padding:4px 8px;font-size:.9em;" onclick="removeCartItem(${index})">Supprimer</button>`;
+    cartList.appendChild(li);
+  });
+  cartTotal.textContent="Total : "+total.toFixed(2)+" €";
+}
+
+function removeCartItem(index){ cart.splice(index,1); cartCount.textContent = cart.length; renderCartList(); }
+
+// Ouvrir/fermer panier
+cartIcon.addEventListener("click",()=>{ renderCartList(); cartOverlay.style.display="flex"; });
+closeCart.addEventListener("click",()=>cartOverlay.style.display="none");
+
+// Paiement (ouverture)
+checkoutBtn.addEventListener("click",()=>{
+  if(cart.length===0){alert("Ton panier est vide.");return;}
+  paymentOverlay.style.display="flex";
+  cartOverlay.style.display="none";
+  populateCryptoIcons();
+});
+
+// Fermer paiement
+closePayment.addEventListener("click",()=>paymentOverlay.style.display="none");
+
+// Remplir icônes crypto
+function populateCryptoIcons(){
+  cryptoContainer.innerHTML = "";
+  selectedCryptoInfo.style.display = "none";
+  let total = 0;
+  cart.forEach(item=>{
+    total += item.type==="pack"?item.price*1.5:item.type==="formation"?item.price*1.2:item.price;
+  });
+
+  for(const [crypto, rate] of Object.entries(RATES)){
+    const amount = (total/rate).toFixed(6);
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.style.padding = "10px";
+    btn.style.display = "flex";
+    btn.style.flexDirection = "column";
+    btn.style.alignItems = "center";
+    btn.style.gap = "4px";
+    btn.innerHTML = `<img src="https://cryptoicons.org/api/icon/${crypto.toLowerCase()}/64" alt="${crypto}" style="width:36px;height:36px;"><span>${crypto}</span>`;
+    btn.addEventListener("click",()=>{
+      selectedCrypto = crypto;
+      cryptoAmountDisplay.textContent = `Montant à envoyer : ${amount} ${crypto}`;
+      cryptoAddressDisplay.value = ADDRESSES[crypto];
+      selectedCryptoInfo.style.display = "block";
+    });
+    cryptoContainer.appendChild(btn);
+  }
+}
+
+// Copier adresse
+copyAddressBtn.addEventListener("click",()=>{
+  cryptoAddressDisplay.select();
+  cryptoAddressDisplay.setSelectionRange(0,99999);
+  document.execCommand("copy");
+  alert("Adresse copiée ");
+});
+
+// Confirmer paiement + ENVOI EMAIL (EmailJS)
+paymentForm.addEventListener("submit",e=>{
+  e.preventDefault();
+  if(!paymentForm.clientName.value||!paymentForm.clientEmail.value||!paymentForm.clientWhatsapp.value||!selectedCrypto||!paymentForm.txidInput.value){
+    alert("Remplis tous les champs et choisis la crypto.");
+    return;
+  }
+
+  // Construction résumé panier (pour ton mail)
+  let total = 0;
+  let itemsText = cart.map(it=>{
+    const price = (it.type==="pack") ? it.price*1.5 : (it.type==="formation" ? it.price*1.2 : it.price);
+    total += price;
+    return `${it.name} (${it.type}) - ${price.toFixed(2)}€`;
+  }).join(" | ");
+
+  const templateParams = {
+    client_name: paymentForm.clientName.value,
+    client_email: paymentForm.clientEmail.value,
+    client_whatsapp: paymentForm.clientWhatsapp.value,
+    crypto: selectedCrypto,
+    crypto_address: ADDRESSES[selectedCrypto],
+    txid: paymentForm.txidInput.value,
+    cart_summary: itemsText,
+    cart_total: total.toFixed(2) + " €"
+  };
+
+  emailjs.send("service_cqabxkm", "template_vjstk32", templateParams)
+  .then(function() {
+     alert("Paiement confirmé . Patiente 2 à 4h pour recevoir ton contenu.");
+     cart=[]; cartCount.textContent="0"; renderCartList(); paymentOverlay.style.display="none";
+  }, function(error) {
+     alert("Erreur lors de l’envoi des infos : " + (error && error.text ? error.text : "problème inconnu"));
+  });
+});
+
+// Menu scroll
+document.querySelectorAll('nav a').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    const target=document.querySelector(link.getAttribute('href'));
+    if(target) target.scrollIntoView({behavior:'smooth'});
+  });
+});
+
+renderProducts();
+</script>
+</body>
+</html>
