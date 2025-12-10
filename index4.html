@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>KMF — Dashboard Produits & Ventes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&family=Playfair+Display:wght@600;800&display=swap" rel="stylesheet">
+
+
+<button class="btn" id="saveSale">Ajouter la vente</button>
+
+Dashboard</button>
+      <button class="tab" data-view="products">📁 Produits</button>
+      <button class="tab" data-view="sales">🧾 Ventes</button>
+      <button class="tab" data-view="tools">🧰 Outils</button>
+    </div>
+
+
+
+
+
+
+
+
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top: 10px;">
+                <button class="btn" id="saveProduct">Enregistrer le produit</button>
+                <button class="btn ghost" id="resetProduct">Réinitialiser</button>
+                <div class="tiny">Astuce: le “Type” est utile pour organiser tes offres (ebook / formation / pack).</div>
+              </div>
+              <input type="hidden" id="editProductId" />
+            </div>
+          </div>
+
+
+
+
+<div class="mini">
+      <div><b>Comment ça marche</b></div>
+      <div class="tiny">1) Tu ajoutes tes produits.</div>
+      <div class="tiny">2) Quand un client paie, tu enregistres une vente (ou plusieurs).</div>
+      <div class="tiny">3) Le Dashboard calcule automatiquement tes gains.</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="topbar">
+      <div>
+        <h2 class="title">Dashboard — Stats en temps réel (local)</h2>
+        <p class="subtitle">Ajoute tes produits, enregistre chaque vente (après paiement crypto), et vois tes gains évoluer immédiatement.</p>
+      </div>
+      <div class="pill">Stockage: <b>localStorage</b> (sur ton navigateur)</div>
+    </div>
+
+
+
+
+
+
+
+
+
+
+
+  <style>
+    :root{
+      --bg:#070a09;
+      --panel:#0f1512;
+      --panel2:#101a15;
+      --muted:#cfe6d8;
+      --accent:#ffeb3b;
+      --good:#55efc4;
+      --bad:#ff6b6b;
+      --text:#f5fff7;
+      --border: rgba(255,255,255,.14);
+      --shadow: 0 18px 60px rgba(0,0,0,.55);
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    *{box-sizing:border-box;}
+    body{margin:0;background: radial-gradient(1200px 900px at 15% -10%, #1a2a21 0%, var(--bg) 55%, #050706 100%); color:var(--text); font-family:Montserrat, Arial, sans-serif; line-height:1.45;}
+    a{color:inherit; text-decoration:none;}
+    ::selection{background: rgba(255,235,59,.35);}
+
+    /* LAYOUT */
+    .app{display:flex; min-height:100vh;}
+    .sidebar{
+      width:290px;
+      background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.00)), var(--panel);
+      border-right: 1px solid var(--border);
+      padding: 18px 16px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+    }
+    .brand{display:flex; gap:10px; align-items:center; margin-bottom:14px;}
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: radial-gradient(12px 12px at 30% 30%, #fff, rgba(255,255,255,.0) 60%),
+                  linear-gradient(135deg, #1c6b3d, #0e1b14);
+      border: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 12px 24px rgba(0,0,0,.5);
+      display:flex; align-items:center; justify-content:center;
+      font-weight: 900;
+    }
+    .brand h1{font-family:"Playfair Display", serif; font-size: 18px; letter-spacing: .2px; margin:0;}
+    .brand p{margin:0; font-size: 12px; opacity: .9;}
+
+    .nav{margin-top: 12px;}
+    .tab{
+      width: 100%;
+      text-align: left;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      padding: 10px 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: .2px;
+      display:flex;
+      gap:10px;
+      align-items:center;
+      transition: background .18s, transform .18s;
+    }
+    .tab:hover{background: rgba(255,255,255,.10); transform: translateX(2px);}
+    .tab.active{background: rgba(255,235,59,.14); border: 1px solid rgba(255,235,59,.35);}
+
+    .mini{
+      margin-top: 14px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: rgba(255,255,255,.06);
+      font-size: 12px;
+      opacity: .92;
+    }
+
+    /* CONTENT */
+    .content{flex:1; padding: 22px 22px 54px;}
+    .topbar{display:flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start;}
+    .title{margin:0;}
+    .subtitle{margin: 4px 0 0 0; opacity:.9; max-width: 72ch;}
+    .pill{display:inline-flex; gap:8px; align-items:center; padding: 6px 10px; border-radius: 999px; background: rgba(255,255,255,.10); border: 1px solid rgba(255,255,255,.18); font-weight: 800; letter-spacing:.2px; font-size: 12px;}
+
+    /* PANELS */
+    .panel{margin-top: 16px; border-radius: 16px; border: 1px solid var(--border); background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.00)), var(--panel2); box-shadow: var(--shadow); overflow: hidden;}
+    .panel-head{padding: 14px 14px 10px; border-bottom: 1px solid rgba(255,255,255,.12); display:flex; align-items: center; justify-content: space-between; gap: 10px;}
+    .panel-title{margin:0; font-family:"Playfair Display", serif; letter-spacing:.2px;}
+    .panel-body{padding: 14px;}
+
+    /* CARDS / GRID */
+    .grid{display:grid; gap: 12px;}
+    .grid-3{grid-template-columns: repeat(3, minmax(0, 1fr));}
+    .grid-2{grid-template-columns: repeat(2, minmax(0, 1fr));}
+    @media (max-width: 880px){ .sidebar{display:none;} .content{padding: 18px 14px 40px;} .grid-3{grid-template-columns: 1fr;} .grid-2{grid-template-columns: 1fr;} }
+
+    .stat{padding: 14px; border-radius: 14px; border: 1px solid rgba(255,255,255,.14); background: rgba(9, 14, 12, .9);}
+    .stat .k{opacity:.8; font-size: 12px; letter-spacing: .2px;}
+    .stat .v{margin-top: 6px; font-size: 22px; font-weight: 900; letter-spacing: .2px;}
+    .stat .v small{font-size: 12px; font-weight: 800; opacity: .9;}
+
+    /* TABLE */
+    table{width:100%; border-collapse: collapse; font-size: 13px;}
+    th, td{padding: 10px 8px; border-bottom: 1px solid rgba(255,255,255,.12); vertical-align: top;}
+    th{background: rgba(255,255,255,.10); text-align:left; position: sticky; top: 0; backdrop-filter: blur(8px);}
+    .muted{opacity: .75;}
+
+    /* FORM */
+    .field{display:flex; flex-direction: column; gap: 6px;}
+    label{font-weight: 800; font-size: 13px; letter-spacing: .2px;}
+    input, select, textarea{
+      width: 100%;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.35);
+      color: var(--text);
+      outline: none;
+    }
+    textarea{min-height: 92px; resize: vertical;}
+    .btn{
+      border: 0;
+      cursor: pointer;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 900;
+      letter-spacing: .2px;
+      background: var(--accent);
+      color: #101010;
+      transition: transform .15s, filter .15s;
+    }
+    .btn:hover{transform: scale(1.02); filter: brightness(1.05);}
+    .btn.danger{background: var(--bad); color:#180806;}
+    .btn.ghost{background: rgba(255,255,255,.12); color: var(--text); border: 1px solid rgba(255,255,255,.22);}
+
+    .tiny{font-size: 12px; opacity: .9;}
+    .mono{font-family: var(--mono); font-size: 12px; opacity: .9;}
+  </style>
+</head>
+
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">K</div>
+      <div>
+        <h1>KMF Admin</h1>
+        <p>Produits · Ventes · Statistiques</p>
+      </div>
+    </div>
+
+    <div class="nav" role="navigation" aria-label="Navigation">
+      <button class="tab active" data-view="dashboard">📊 Dashboard</button>
+      <button class="tab" data-view="products">📁 Produits</button>
+      <button class="tab" data-view="sales">🧾 Ventes</button>
+      <button class="tab" data-view="tools">🧰 Outils</button>
+    </div>
+
+    <div class="mini">
+      <div><b>Comment ça marche</b></div>
+      <div class="tiny">1) Tu ajoutes tes produits.</div>
+      <div class="tiny">2) Quand un client paie, tu enregistres une vente (ou plusieurs).</div>
+      <div class="tiny">3) Le Dashboard calcule automatiquement tes gains.</div>
+    </div>
+  </aside>
+
+  <main class="content">
+    <div class="topbar">
+      <div>
+        <h2 class="title">Dashboard — Stats en temps réel (local)</h2>
+        <p class="subtitle">Ajoute tes produits, enregistre chaque vente (après paiement crypto), et vois tes gains évoluer immédiatement.</p>
+      </div>
+      <div class="pill">Stockage: <b>localStorage</b> (sur ton navigateur)</div>
+    </div>
+
+    <!-- VIEW: DASHBOARD -->
+    <section id="view-dashboard" class="panel">
+      <div class="panel-head">
+        <div class="panel-title">Vue d’ensemble</div>
+        <div class="mono" id="dashMeta"></div>
+      </div>
+      <div class="panel-body">
+        <div class="grid grid-3" id="statsGrid">
+          <div class="stat">
+            <div class="k">Total ventes</div>
+            <div class="v" id="stTotalSales">0</div>
+          </div>
+          <div class="stat">
+            <div class="k">Revenu total (≈ €)</div>
+            <div class="v" id="stTotalRevenue">0 <small>€</small></div>
+          </div>
+          <div class="stat">
+            <div class="k">Top produit</div>
+            <div class="v" id="stTop">—</div>
+          </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top: 14px;">
+          <div class="panel" style="margin:0;">
+            <div class="panel-head">
+              <div class="panel-title">Dernières ventes</div>
+              <div class="tiny">Les 8 dernières lignes</div>
+            </div>
+            <div class="panel-body" style="padding: 0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th><th>Produit</th><th>Montant</th><th>Crypto</th>
+                  </tr>
+                </thead>
+                <tbody id="recentSalesTbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-head">
+              <div class="panel-title">Répartition (par produit)</div>
+              <div class="tiny">Nombre de ventes</div>
+            </div>
+            <div class="panel-body">
+              <canvas id="chart" width="520" height="240" style="width:100%; height:240px;"></canvas>
+              <div class="tiny" style="margin-top: 8px;">Astuce: utilise « Outils » pour sauvegarder/ restaurer tes données.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: PRODUCTS -->
+    <section id="view-products" class="panel" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">Produits (ajout / édition)</div>
+        <div class="tiny">Tes produits sont utilisés dans les ventes</div>
+      </div>
+      <div class="panel-body">
+        <div class="grid grid-2">
+          <div class="panel" style="margin:0;">
+            <div class="panel-head"><div class="panel-title">Ajouter / modifier un produit</div></div>
+            <div class="panel-body">
+              <div class="field">
+                <label>Nom du produit</label>
+                <input id="pName" placeholder="Ex: Marketing Digital" />
+              </div>
+              <div class="field">
+                <label>Type</label>
+                <select id="pType">
+                  <option value="ebook">Ebook</option>
+                  <option value="formation">Formation</option>
+                  <option value="pack">Pack</option>
+                </select>
+              </div>
+              <div class="field">
+                <label>Prix (en €)</label>
+                <input id="pPrice" type="number" step="0.01" min="0" placeholder="Ex: 39.99" />
+              </div>
+              <div class="field">
+                <label>Description (optionnel)</label>
+                <textarea id="pDesc" placeholder="Ce que le client obtient + bénéfices clés..."></textarea>
+              </div>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top: 10px;">
+                <button class="btn" id="saveProduct">Enregistrer le produit</button>
+                <button class="btn ghost" id="resetProduct">Réinitialiser</button>
+                <div class="tiny">Astuce: le “Type” est utile pour organiser tes offres (ebook / formation / pack).</div>
+              </div>
+              <input type="hidden" id="editProductId" />
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-head">
+              <div class="panel-title">Liste produits</div>
+              <div class="tiny" id="prodCount">0 produits</div>
+            </div>
+            <div class="panel-body" style="padding:0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Nom</th><th>Type</th><th>Prix</th><th></th>
+                  </tr>
+                </thead>
+                <tbody id="productsTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: SALES -->
+    <section id="view-sales" class="panel" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">Enregistrer une vente (après paiement)</div>
+        <div class="tiny">Chaque vente augmente tes stats (total + revenus)</div>
+      </div>
+      <div class="panel-body">
+        <div class="grid grid-2">
+          <div class="panel" style="margin:0;">
+            <div class="panel-head"><div class="panel-title">Nouvelle vente</div></div>
+            <div class="panel-body">
+              <div class="field">
+                <label>Produit</label>
+                <select id="sProduct"></select>
+              </div>
+              <div class="field">
+                <label>Type (rappel)</label>
+                <input id="sType" readonly />
+              </div>
+              <div class="field">
+                <label>Montant (en €)</label>
+                <input id="sAmount" type="number" step="0.01" min="0" />
+              </div>
+              <div class="field">
+                <label>Crypto (ex: ETH / BTC / SOL / TRX)</label>
+                <input id="sCrypto" placeholder="ETH" />
+              </div>
+              <div class="field">
+                <label>TXID (optionnel)</label>
+                <input id="sTxid" placeholder="Hash de transaction" />
+              </div>
+              <div class="field">
+                <label>Email client (optionnel)</label>
+                <input id="sEmail" type="email" placeholder="client@mail.com" />
+              </div>
+              <div class="field">
+                <label>Date</label>
+                <input id="sDate" type="date" />
+              </div>
+
+              <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px;">
+                <button class="btn" id="saveSale">Ajouter la vente</button>
+                <button class="btn ghost" id="resetSale">Réinitialiser</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-head">
+              <div class="panel-title">Toutes les ventes (historique)</div>
+              <div class="tiny" id="saleCount">0 ventes</div>
+            </div>
+            <div class="panel-body" style="padding:0;">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Date</th><th>Email</th><th>Produit</th><th>Montant</th><th>Crypto</th><th>TXID</th>
+                  </tr>
+                </thead>
+                <tbody id="salesTbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW: TOOLS -->
+    <section id="view-tools" class="panel" style="display:none;">
+      <div class="panel-head">
+        <div class="panel-title">Outils (sauvegarde / restauration)</div>
+        <div class="tiny">Pratique si tu changes de navigateur / appareil</div>
+      </div>
+      <div class="panel-body">
+        <div class="grid grid-2">
+          <div class="panel" style="margin:0;">
+            <div class="panel-head"><div class="panel-title">Exporter</div></div>
+            <div class="panel-body">
+              <div class="field">
+                <label>Exporter tes données (Produits + Ventes)</label>
+                <button class="btn" id="exportBtn">Télécharger JSON</button>
+              </div>
+              <div class="tiny">Le fichier contient tout: produits + ventes (à restaurer plus tard).</div>
+            </div>
+          </div>
+
+          <div class="panel" style="margin:0;">
+            <div class="panel-head"><div class="panel-title">Importer</div></div>
+            <div class="panel-body">
+              <div class="field">
+                <label>Importer un JSON (écrase les données actuelles)</label>
+                <input type="file" id="importFile" accept=".json" />
+              </div>
+              <div class="tiny">Astuce: fais une export avant d’importer, au cas où.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<script>
+/* =========================
+   STORAGE + MODELE (localStorage)
+   ========================= */
+const LS_PRODUCTS = "kmf_products_v1";
+const LS_SALES    = "kmf_sales_v1";
+
+function uid(){ return "id_" + Date.now().toString(36) + "_" + Math.random().toString(16).slice(2); }
+
+function loadJSON(key, fallback){
+  try { const raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : fallback; }
+  catch(e){ return fallback; }
+}
+function saveJSON(key, value){ localStorage.setItem(key, JSON.stringify(value)); }
+
+function ensureDefaults(){
+  let products = loadJSON(LS_PRODUCTS, []);
+  let sales    = loadJSON(LS_SALES, []);
+  // petit jeu de départ si vide (tu peux le supprimer ensuite)
+  if(products.length === 0){
+    products = [
+      { id:"marketing", name:"Marketing Digital", type:"ebook", price:39.99, desc:"Bases pour démarrer et vendre en ligne." },
+      { id:"ofm-ia", name:"OFM IA", type:"formation", price:69.99, desc:"Setup + méthode pour lancer un modèle IA." }
+    ];
+    saveJSON(LS_PRODUCTS, products);
+  }
+  if(sales.length === 0){ saveJSON(LS_SALES, sales); }
+  return { products, sales };
+}
+
+/* =========================
+   UI: navigation
+   ========================= */
+const tabs = document.querySelectorAll(".tab");
+const views = {
+  dashboard: document.getElementById("view-dashboard"),
+  products:  document.getElementById("view-products"),
+  sales:     document.getElementById("view-sales"),
+  tools:     document.getElementById("view-tools")
+};
+
+function setView(name){
+  tabs.forEach(t => t.classList.toggle("active", t.dataset.view === name));
+  Object.entries(views).forEach(([k,v]) => { v.style.display = (k===name) ? "block" : "none"; });
+  if(name === "dashboard") refreshDashboard();
+  if(name === "products")  refreshProducts();
+  if(name === "sales")     refreshSales();
+}
+
+tabs.forEach(btn => btn.addEventListener("click", () => setView(btn.dataset.view)));
+
+/* =========================
+   CORE: state (products + sales)
+   ========================= */
+let state = ensureDefaults();
+
+function getProducts(){ return loadJSON(LS_PRODUCTS, []); }
+function getSales(){ return loadJSON(LS_SALES, []); }
+
+function setProducts(p){ saveJSON(LS_PRODUCTS, p); }
+function setSales(s){ saveJSON(LS_SALES, s); }
+
+/* =========================
+   PRODUCTS (CRUD)
+   ========================= */
+const pName = document.getElementById("pName");
+const pType = document.getElementById("pType");
+const pPrice= document.getElementById("pPrice");
+const pDesc = document.getElementById("pDesc");
+const editProductId = document.getElementById("editProductId");
+
+const productsTbody = document.getElementById("productsTbody");
+const prodCount = document.getElementById("prodCount");
+
+document.getElementById("saveProduct").addEventListener("click", () => {
+  const name = pName.value.trim();
+  const type = pType.value;
+  const price = parseFloat(pPrice.value);
+  const desc = pDesc.value.trim();
+
+  if(!name || isNaN(price) || price < 0){
+    alert("Complète au minimum le nom et un prix valide (≥ 0).");
+    return;
+  }
+
+  let products = getProducts();
+  const id = editProductId.value ? editProductId.value : uid();
+
+  const rec = { id, name, type, price, desc };
+  const idx = products.findIndex(x => x.id === id);
+  if(idx >= 0) products[idx] = rec; else products.push(rec);
+
+  setProducts(products);
+  resetProductForm();
+  refreshProducts();
+  refreshSales(); // met à jour les listes de sélection
+  refreshDashboard();
+});
+
+document.getElementById("resetProduct").addEventListener("click", resetProductForm);
+
+function resetProductForm(){
+  editProductId.value = "";
+  pName.value = "";
+  pType.value = "ebook";
+  pPrice.value = "";
+  pDesc.value = "";
+}
+
+function refreshProducts(){
+  const products = getProducts();
+  prodCount.textContent = `${products.length} produit(s)`;
+  productsTbody.innerHTML = "";
+
+  products.sort((a,b)=> a.name.localeCompare(b.name));
+
+  for(const p of products){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(p.name)}</td>
+      <td class="muted">${escapeHtml(p.type)}</td>
+      <td>${p.price.toFixed(2)} €</td>
+      <td style="white-space:nowrap;">
+        <button class="btn" data-action="edit" data-id="${p.id}">Éditer</button>
+        <button class="btn danger" data-action="del" data-id="${p.id}">Supprimer</button>
+      </td>
+    `;
+    productsTbody.appendChild(tr);
+  }
+
+  productsTbody.querySelectorAll("button").forEach(b => {
+    b.addEventListener("click", () => {
+      const id = b.dataset.id;
+      const products = getProducts();
+      const p = products.find(x => x.id === id);
+      if(!p) return;
+
+      if(b.dataset.action === "edit"){
+        editProductId.value = p.id;
+        pName.value = p.name;
+        pType.value = p.type;
+        pPrice.value = String(p.price);
+        pDesc.value = p.desc || "";
+        setView("products");
+      } else {
+        // suppression (on garde les ventes existantes mais le produit ne sera plus sélectionnable)
+        const filtered = products.filter(x => x.id !== id);
+        setProducts(filtered);
+        refreshProducts();
+        refreshSales();
+        refreshDashboard();
+      }
+    });
+  });
+}
+
+/* =========================
+   SALES (ajout + liste)
+   ========================= */
+const sProduct = document.getElementById("sProduct");
+const sType    = document.getElementById("sType");
+const sAmount  = document.getElementById("sAmount");
+const sCrypto  = document.getElementById("sCrypto");
+const sTxid    = document.getElementById("sTxid");
+const sEmail   = document.getElementById("sEmail");
+const sDate    = document.getElementById("sDate");
+
+const salesTbody = document.getElementById("salesTbody");
+const saleCount  = document.getElementById("saleCount");
+
+function fillProductSelect(){
+  const products = getProducts();
+  sProduct.innerHTML = "";
+  products.forEach(p => {
+    const opt = document.createElement("option");
+    opt.value = p.id;
+    opt.textContent = `${p.name} — ${p.type} — ${p.price.toFixed(2)} €`;
+    sProduct.appendChild(opt);
+  });
+  // défaut: si produits existent, pré-remplir type + montant
+  if(products.length){
+    const p = products[0];
+    sType.value = p.type;
+    sAmount.value = p.price;
+  } else {
+    sType.value = "";
+    sAmount.value = "";
+  }
+}
+
+sProduct.addEventListener("change", () => {
+  const products = getProducts();
+  const p = products.find(x => x.id === sProduct.value);
+  if(!p) return;
+  sType.value = p.type;
+  if(!sAmount.value) sAmount.value = p.price;
+});
+
+document.getElementById("saveSale").addEventListener("click", () => {
+  const products = getProducts();
+  const p = products.find(x => x.id === sProduct.value);
+  if(!p){ alert("Ajoute d’abord au moins un produit."); return; }
+
+  const amount = parseFloat(sAmount.value);
+  if(isNaN(amount) || amount < 0){ alert("Montant invalide."); return; }
+
+  const sale = {
+    id: uid(),
+    date: (sDate.value || new Date().toISOString().slice(0,10)),
+    email: (sEmail.value || "").trim(),
+    product_id: p.id,
+    product_name: p.name,
+    type: p.type,
+    amount_eur: Number(amount.toFixed(2)),
+    crypto: (sCrypto.value || "ETH").toUpperCase(),
+    txid: (sTxid.value || "").trim()
+  };
+
+  const sales = getSales();
+  sales.push(sale);
+  setSales(sales);
+
+  resetSaleForm();
+  refreshSales();
+  refreshDashboard();
+});
+
+document.getElementById("resetSale").addEventListener("click", resetSaleForm);
+
+function resetSaleForm(){
+  fillProductSelect();
+  sCrypto.value = "ETH";
+  sTxid.value = "";
+  sEmail.value = "";
+  sDate.value = new Date().toISOString().slice(0,10);
+}
+
+function refreshSales(){
+  const sales = getSales();
+  saleCount.textContent = `${sales.length} vente(s)`;
+
+  salesTbody.innerHTML = "";
+  const ordered = [...sales].sort((a,b) => (a.date < b.date ? 1 : -1));
+
+  for(const v of ordered){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(v.date)}</td>
+      <td class="muted">${escapeHtml(v.email || "—")}</td>
+      <td>${escapeHtml(v.product_name)}</td>
+      <td>${v.amount_eur.toFixed(2)} €</td>
+      <td class="muted">${escapeHtml(v.crypto || "—")}</td>
+      <td class="muted" style="max-width:220px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${escapeHtml(v.txid || "—")}</td>
+    `;
+    salesTbody.appendChild(tr);
+  }
+}
+
+/* =========================
+   DASHBOARD (stats + chart)
+   ========================= */
+const stTotalSales   = document.getElementById("stTotalSales");
+const stTotalRevenue = document.getElementById("stTotalRevenue");
+const stTop          = document.getElementById("stTop");
+const dashMeta       = document.getElementById("dashMeta");
+const recentSalesTbody = document.getElementById("recentSalesTbody");
+const chartCanvas = document.getElementById("chart");
+
+function refreshDashboard(){
+  const sales = getSales();
+  const products = getProducts();
+
+  const totalSales = sales.length;
+  const totalRevenue = sales.reduce((s, x) => s + (Number(x.amount_eur) || 0), 0);
+
+  stTotalSales.textContent = totalSales;
+  stTotalRevenue.textContent = totalRevenue.toFixed(2) + " €";
+
+  // top produit
+  const byProd = {};
+  for(const s of sales){
+    const key = `${s.product_name} (${s.type})`;
+    byProd[key] = (byProd[key] || 0) + 1;
+  }
+  const topEntry = Object.entries(byProd).sort((a,b)=> b[1]-a[1])[0];
+  stTop.textContent = topEntry ? `${topEntry[0]} — ${topEntry[1]}` : "—";
+
+  dashMeta.textContent = `Données locales · ${new Date().toLocaleString("fr-FR")}`;
+
+  // dernières ventes (8)
+  recentSalesTbody.innerHTML = "";
+  const latest = [...sales].sort((a,b)=> (a.date < b.date ? 1 : -1)).slice(0,8);
+  for(const v of latest){
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHtml(v.date)}</td>
+      <td>${escapeHtml(v.product_name)}</td>
+      <td>${v.amount_eur.toFixed(2)} €</td>
+      <td class="muted">${escapeHtml(v.crypto || "—")}</td>
+    `;
+    recentSalesTbody.appendChild(tr);
+  }
+
+  drawChart(byProd);
+}
+
+function drawChart(byProd){
+  const ctx = chartCanvas.getContext("2d");
+  const W = chartCanvas.width;
+  const H = chartCanvas.height;
+
+  ctx.clearRect(0,0,W,H);
+
+  const entries = Object.entries(byProd).sort((a,b)=> b[1]-a[1]).slice(0,6);
+  if(entries.length === 0){
+    ctx.fillStyle = "rgba(255,255,255,.65)";
+    ctx.font = "14px Montserrat";
+    ctx.fillText("Aucune vente pour l'instant — enregistre une vente dans l’onglet « Ventes ».", 12, 40);
+    return;
+  }
+
+  const pad = {l: 46, r: 14, t: 18, b: 38};
+  const max = Math.max(...entries.map(e => e[1]));
+
+  // axes
+  ctx.strokeStyle = "rgba(255,255,255,.22)";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.l, pad.t);
+  ctx.lineTo(pad.l, H - pad.b);
+  ctx.lineTo(W - pad.r, H - pad.b);
+  ctx.stroke();
+
+  const innerW = W - pad.l - pad.r;
+  const innerH = H - pad.t - pad.b;
+  const barW = innerW / entries.length * 0.68;
+  const gap = innerW / entries.length * 0.32;
+
+  entries.forEach((e, i) => {
+    const x = pad.l + i * (barW + gap) + gap/2;
+    const h = (e[1] / max) * (innerH - 12);
+
+    // bar
+    ctx.fillStyle = "rgba(255,235,59,.9)";
+    ctx.fillRect(x, pad.t + (innerH - h), barW, h);
+
+    // value
+    ctx.fillStyle = "rgba(245,255,247,.92)";
+    ctx.font = "12px Montserrat";
+    ctx.fillText(String(e[1]), x + 4, pad.t + (innerH - h) - 6);
+
+    // label (wrap by truncation)
+    const label = e[0].length > 22 ? e[0].slice(0, 22) + "…" : e[0];
+    ctx.fillStyle = "rgba(240,255,245,.82)";
+    ctx.font = "11px Montserrat";
+    ctx.fillText(label, x, H - 14);
+  });
+}
+
+/* =========================
+   TOOLS (export/import)
+   ========================= */
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const data = { products: getProducts(), sales: getSales() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type: "application/json"});
+  const url = URL.createObjectURL(blob);
+
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "kmf_data.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("importFile").addEventListener("change", (e) => {
+  const file = e.target.files?.[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try{
+      const obj = JSON.parse(reader.result);
+      if(!obj || !Array.isArray(obj.products) || !Array.isArray(obj.sales)) throw new Error("Format invalide");
+      setProducts(obj.products);
+      setSales(obj.sales);
+      refreshProducts();
+      refreshSales();
+      refreshDashboard();
+      alert("Import réussi ✅");
+    }catch(err){
+      alert("Import impossible : fichier JSON invalide.");
+    }
+  };
+  reader.readAsText(file);
+});
+
+/* =========================
+   UTIL
+   ========================= */
+function escapeHtml(str){
+  return String(str)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* =========================
+   INIT
+   ========================= */
+(function init(){
+  ensureDefaults();
+  fillProductSelect();
+  // date par défaut dans le formulaire vente
+  sDate.value = new Date().toISOString().slice(0,10);
+
+  refreshProducts();
+  refreshSales();
+  refreshDashboard();
+})();
+</script>
+</body>
+</html>

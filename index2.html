@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EbookShop — Ebooks et Formations produit phare en reduction </title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+
+<section>
+
+
+
+
+<header>
+
+
+  
+ <div class="logo">📚 EbookShop </div>
+
+
+    <a href="index.html">Retour</a>
+</header>
+
+
+
+</section>
+<style>
+
+
+
+
+/* ==== STYLE GLOBAL ==== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+body{background:#1f3d2e;color:#fff;line-height:1.6;}
+.container{max-width:1500px;margin:0 auto;padding:0 25px;}
+
+
+/* ==== HEADER ==== */
+header{position:fixed;top:0;left:0;width:100%;background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);border-bottom:2px solid #ffeb3b;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:2em;font-weight:700;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav li{margin-left:15px;}
+nav a{color:#fff;text-decoration:none;font-weight:700;letter-spacing:0.5px;transition:0.25s;}
+nav a:hover{color:#ffeb3b;}
+
+
+
+/* ==== CART ==== */
+#cartIcon{position:relative;background:#ffeb3b;color:#000;padding:12px 14px;border-radius:12px;font-size:1.1em;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);transition:0.2s;margin-left:10px;}
+#cartIcon:hover{transform:scale(1.05);}
+#cartCount{font-weight:700;margin-left:6px;}
+
+/* ==== HERO SECTION ==== */
+main{padding-top:120px;}
+.hero{background:linear-gradient(135deg, rgba(0,0,0,.55), rgba(0,0,0,.15));border-radius:22px;padding:34px 20px;margin:24px 0 18px;box-shadow:0 14px 30px rgba(0,0,0,.45);text-align:center;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.6em;margin-bottom:10px;}
+.hero p{max-width:860px;margin:0 auto 18px;font-size:1.1em;opacity:.95;}
+
+/* ==== CARDS ==== */
+.section-title{font-family:'Playfair Display',serif;font-size:2.1em;text-align:center;margin:14px 0;}
+.section-sub{max-width:920px;margin:0 auto 18px;text-align:center;opacity:.9;}
+
+.grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;}
+
+.card{width:280px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:16px;box-shadow:0 12px 24px rgba(0,0,0,.35);backdrop-filter:blur(8px);transition: transform .3s, box-shadow .3s;}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(0,0,0,.45);}
+.card h3{font-family:'Playfair Display',serif;font-size:1.35em;margin:8px 0;}
+.price{font-weight:800;margin:6px 0 10px;}
+
+.card-desc{font-size:.92em;opacity:.95;margin-bottom:8px;}
+.card-benefits{font-size:.85em;opacity:.9;margin-bottom:10px;}
+.card-benefits li{margin-left:18px;list-style:disc;}
+
+/* ==== BUTTON ==== */
+.btn{display:inline-block;padding:12px 18px;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer;background:#ffeb3b;color:#000;transition:transform .18s, background .18s;border:none;}
+.btn:hover{background:#fff;transform:scale(1.03);}
+
+/* ==== INFO PAGE ==== */
+#infoOverlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;padding:20px;z-index:3000;}
+.info-panel{width:min(620px,95%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;backdrop-filter:blur(10px);max-height:90vh;overflow-y:auto;text-align:left;}
+.info-panel h2{font-family:'Playfair Display';}
+.info-panel ul{margin-left:50px;list-style:disc;}
+.closeInfo{margin-top:20px;background:#fff;color:#000;}
+
+/* ==== PACK ==== */
+.pack-section{margin:30px 0;padding:20px;background:rgba(255,255,255,.08);border-radius:18px;text-align:center;}
+
+/* ==== OVERLAYS ==== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;justify-content:center;align-items:center;padding:20px;z-index:2000;}
+.panel{width:min(520px,95%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;backdrop-filter:blur(10px);text-align:center;overflow-y:auto;max-height:90vh;}
+
+#cartList{list-style:none;padding:0;margin-bottom:12px;}
+
+footer{margin-top:46px;text-align:center;padding:18px;background:rgba(0,0,0,.6);}
+footer a{color:#ffeb3b;text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.small{font-size:.9em;opacity:.9;margin-top:6px;}
+
+/* ===== AGRANDIR LES CHAMPS DE PAIEMENT ===== */
+#paymentForm input {
+  width: 100%;
+  padding: 16px;               /* ➜ augmente la hauteur */
+  font-size: 1.15em;           /* ➜ texte plus grand */
+  border-radius: 12px;
+  margin-bottom: 14px;
+  border: none;
+}
+
+/* === FOND ANIME === */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Montserrat', sans-serif;
+    background: linear-gradient(-45deg, #0a0a0a, #1a1a1a, #0a0a0a, #111111);
+    background-size: 400% 400%;
+    animation: gradientBG 15s ease infinite;
+    color: #fff;
+}
+
+@keyframes gradientBG {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+/* Header */
+header {
+    width: 100%;
+    background: rgba(46,139,87,0.1);
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.6);
+}
+
+header h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 26px;
+    color: #2e8b57;
+}
+
+header a {
+    text-decoration: none;
+    color: #fff;
+    background: #2e8b57;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+header a:hover {
+    background: #3cb371;
+}
+
+/* Container principal */
+.container {
+    max-width: 600px;
+    width: 90%;
+    margin: 50px auto;
+    background: rgba(255,255,255,0.05);
+    border-radius: 15px;
+    padding: 35px 30px;
+    box-shadow: 0 15px 30px rgba(0,0,0,0.7);
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.3s;
+}
+
+.container:hover {
+    transform: translateY(-5px);
+}
+
+h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 24px;
+    color: #2e8b57;
+    text-align: center;
+    margin-bottom: 25px;
+}
+
+/* Labels et champs */
+label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+    color: #3cb371;
+}
+
+input, select, textarea, button {
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 15px;
+    border-radius: 12px;
+    border: none;
+    outline: none;
+    font-size: 15px;
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+}
+
+textarea { resize: vertical; min-height: 80px; }
+
+button {
+    background: linear-gradient(90deg, #2e8b57, #3cb371);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+button:hover {
+    background: linear-gradient(90deg, #3cb371, #2e8b57);
+}
+
+/* Crypto address */
+.crypto-address {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255,255,255,0.15);
+    padding: 12px;
+    border-radius: 10px;
+    word-break: break-all;
+    margin-bottom: 10px;
+}
+
+.copy-btn {
+    background: #2e8b57;
+    color: #fff;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.copy-btn:hover { background: #3cb371; }
+
+.amount { text-align:center; font-weight:bold; color:#ff6b6b; margin-bottom:15px; }
+
+
+
+/* Explications */
+.card {
+    background: rgba(265,265,265,0.05);
+    border-left: 10px solid #2e8b57;
+    padding: 20px 25px;
+    margin-bottom: 20px;
+    border-radius: 14px;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.6);
+    transition: 0.3s;
+}
+
+.card:hover { transform: translateY(-3px); }
+
+.card h3 { margin:0 0 15px 0; color:#3cb371; }
+.card p { margin:0; font-size:16px; color:#e0f2f1; line-height:1.5; }
+</style>
+</head>
+
+
+
+<body>
+
+
+
+<section id="home" class="hero">
+  <h1></h1>
+  <p>
+
+
+ </p>
+
+.
+ <p>
+
+
+
+paye , débute aujourd'hui et génère tes premiers revenus avec notre produit phare et tester par plus de 400 utilisateurs. </p>
+</section>
+
+
+
+
+
+<section id="home" class="hero">
+  <h1>Ebooks et Formations</h1>
+  <p> Paye et debute aujourd'hui avec l'ebook phare (tendance du site actuellement)et commence a gagner tes premier gain facilement avec notre produit exculsif,déjà plus de 400 utilisateurs </p>
+</section>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<main>
+
+
+
+<body>
+
+
+
+
+
+
+</script>
+<!-- CARROUSEL PREUVES / AVIS / RESULTATS -->
+<style>
+  .proof-slider {
+    width: 100%;
+    max-width: 500px;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 15px;
+    position: relative;
+  }
+
+  .proof-slide-container {
+    display: flex;
+    width: 100%;
+    transition: transform 0.8s ease-in-out;
+  }
+
+  .proof-slide {
+    min-width: 100%;
+    transform: scale(0.95);
+    opacity: 0.6;
+    transition: all 0.5s ease;
+  }
+
+  .proof-slide.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .proof-slide img {
+    width: 100%;
+    border-radius: 15px;
+  }
+
+  /* Effet d'apparition "décollage" */
+  .proof-slide.active img {
+    animation: pop 0.6s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+</style>
+
+<div class="proof-slider">
+  <div class="proof-slide-container" id="proofSlider">
+    <div class="proof-slide active">
+      <img src="IMAGE7.jpg" alt="Preuve 1">
+    </div>
+    <div class="proof-slide">
+      <img src="IMAGE2.jpg" alt="Preuve 2">
+    </div>
+    <div class="proof-slide">
+      <img src="IMAGE3.jpg" alt="Preuve 3">
+    </div>
+  </div>
+</div>
+
+    <h2>Paiement de votre Ebook - 15€ (50% de réduction)</h2>
+    
+    <label for="crypto">Choisissez votre crypto :</label>
+    <select id="crypto">
+        <option value="">-- Sélectionnez --</option>
+        <option value="SOL">Solana (SOL) - Recommandé</option>
+        <option value="TRX">Tron (TRX) - Recommandé</option>
+        <option value="ETH">Ethereum (ETH)</option>
+        <option value="BTC">Bitcoin (BTC)</option>
+    </select>
+
+    <div class="crypto-address" id="addressBox" style="display:none;">
+        <span id="addressText"></span>
+        <button class="copy-btn" onclick="copyAddress()">Copier</button>
+    </div>
+
+    <div class="amount" id="cryptoAmount" style="display:none;"></div>
+
+    <div class="txid-info">Fournissez le TXID ou hash de la transaction après paiement :</div>
+    <input type="text" id="txid" placeholder="Ex: 0x123abc..." required>
+
+    <input type="text" id="name" placeholder="Votre Nom" required>
+    <input type="email" id="email" placeholder="Votre Email" required>
+
+    <button onclick="sendMail()">Envoyer et Valider</button>
+</div>
+
+<!-- Section Explications -->
+<class="<div class="container">
+    <h3>Explications sur le paiement en crypto :</h3>
+ <div class="card">
+    <p><h3>1. Choisir votre crypto :</h3> Sélectionnez la crypto que vous souhaitez utiliser. Les plus rapides et économiques sont SOL et TRX.</p>
+
+</div>
+ <div class="card">
+    <p><h3>2. Copier l’adresse :</h3> Cliquez sur le bouton “Copier” pour copier l’adresse de réception de votre crypto.</p>
+</div>
+
+
+ <div class="card">
+    <p><h3>3. Envoyer le montant :</h3> Envoyez exactement le montant indiqué dans la section “Montant à envoyer”.</p>
+
+</div>
+ <div class="card">
+    <p><h3>4. TXID :</h3> Le TXID (Transaction ID) est un identifiant unique de votre paiement sur la blockchain. Vous le trouverez dans votre portefeuille après avoir envoyé la crypto.</p>
+
+</div>
+
+ <div class="card">
+    <p><strong>5. Validation :</strong> Après envoi, remplissez votre nom, email et TXID dans le formulaire et cliquez sur “Envoyer et Valider”.</p>
+</div>
+ <div class="card">
+    <p><h3>6. Réception de l’Ebook :</h3> Après vérification du TXID, vous recevrez votre ebook à l’adresse email fournie.</p>
+</div>
+
+
+
+<script>
+
+
+<script>
+const cryptoData = {
+    ETH: {address: "0xd4Fbc12bA94496eB13D968e575C9f03380bE4F48", rate: 0.00037},
+    BTC: {address: "bc1qsyn0jp2nzmp2kx65kscnttmhvruq5v2hl0jwra", rate: 0.00077},
+    SOL: {address: "3FVzZ3W2HZ7PaHN9EoWMeA5Pm4A94GyG7R6QWpYiUGRb", rate: 0.12},
+    TRX: {address: "TKHvwB5vDXAUJwYDZ8SJeYifZZX33fP6PA", rate: 18.5}
+};
+
+const cryptoSelect = document.getElementById("crypto");
+const addressBox = document.getElementById("addressBox");
+const addressText = document.getElementById("addressText");
+const cryptoAmount = document.getElementById("cryptoAmount");
+
+cryptoSelect.addEventListener("change", function() {
+    const selected = this.value;
+    if(selected && cryptoData[selected]) {
+        addressText.textContent = cryptoData[selected].address;
+        addressBox.style.display = "flex";
+        cryptoAmount.style.display = "block";
+        cryptoAmount.textContent = `Montant à envoyer : ${cryptoData[selected].rate} ${selected} (~15€)`;
+    } else {
+        addressBox.style.display = "none";
+        cryptoAmount.style.display = "none";
+    }
+});
+
+function copyAddress() {
+    navigator.clipboard.writeText(addressText.textContent).then(() => {
+        alert("Adresse copiée !");
+    });
+}
+
+function sendMail() {
+    const name = encodeURIComponent(document.getElementById("name").value);
+    const email = encodeURIComponent(document.getElementById("email").value);
+    const crypto = encodeURIComponent(cryptoSelect.value);
+    const address = encodeURIComponent(addressText.textContent);
+    const txid = encodeURIComponent(document.getElementById("txid").value);
+
+    if(!name || !email || !crypto || !txid) {
+        alert("Veuillez remplir tous les champs !");
+        return;
+    }
+
+    const mailtoLink = `mailto:Ebookshopcontact@outlook.com?subject=Achat Ebook&body=Nom: ${name}%0AEmail: ${email}%0ACrypto: ${crypto}%0AAdresse: ${address}%0ATransaction ID: ${txid}`;
+    window.location.href = mailtoLink;
+}
+</script>
+
+</body>
+</html>
