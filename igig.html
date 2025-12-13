@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Analytics — EbookShop</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  background:#062d1b;
+  color:#fff;
+  font-family: 'Montserrat', sans-serif;
+  padding:30px;
+}
+
+h1 {
+  text-align:center;
+  margin-bottom:30px;
+}
+
+.grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+  gap:20px;
+}
+
+.card {
+  background:rgba(255,255,255,0.08);
+  border-radius:16px;
+  padding:20px;
+  text-align:center;
+  box-shadow:0 10px 25px rgba(0,0,0,0.4);
+}
+
+.card h2 {
+  font-size:1.1em;
+  margin-bottom:10px;
+  opacity:0.9;
+}
+
+.value {
+  font-size:2.2em;
+  font-weight:900;
+  color:#ffeb3b;
+}
+
+.small {
+  font-size:0.85em;
+  opacity:0.8;
+}
+
+button {
+  margin-top:30px;
+  padding:14px 22px;
+  border-radius:12px;
+  border:none;
+  font-weight:700;
+  cursor:pointer;
+  background:#ffeb3b;
+}
+</style>
+</head>
+
+<body>
+
+<h1>📊 Analytics — EbookShop</h1>
+
+<div class="grid">
+  <div class="card">
+    <h2>👀 Visites</h2>
+    <div class="value" id="visits">0</div>
+    <div class="small">Nombre total</div>
+  </div>
+
+<div class="card">
+  <h2>🌍 Pays visiteurs</h2>
+  <div id="countries" class="small"></div>
+</div>
+
+  <div class="card">
+    <h2>🛒 Ajouts panier</h2>
+    <div class="value" id="cart">0</div>
+  </div>
+
+  <div class="card">
+    <h2>💰 Ventes</h2>
+    <div class="value" id="sales">0</div>
+  </div>
+
+  <div class="card">
+    <h2>💶 Chiffre d’affaires</h2>
+    <div class="value" id="revenue">0 €</div>
+  </div>
+
+  <div class="card">
+    <h2>📈 Conversion</h2>
+    <div class="value" id="conversion">0%</div>
+  </div>
+</div>
+
+<div style="text-align:center;">
+  <button onclick="resetStats()">🔄 Réinitialiser les stats</button>
+</div>
+
+<script>
+function loadAnalytics() {
+  const visits = parseInt(localStorage.getItem("visits")) || 0;
+  const cart = parseInt(localStorage.getItem("addToCart")) || 0;
+  const sales = parseInt(localStorage.getItem("sales")) || 0;
+  const revenue = parseFloat(localStorage.getItem("revenue")) || 0;
+
+  document.getElementById("visits").textContent = visits;
+  document.getElementById("cart").textContent = cart;
+  document.getElementById("sales").textContent = sales;
+  document.getElementById("revenue").textContent = revenue.toFixed(2) + " €";
+
+  let conversion = visits > 0 ? ((sales / visits) * 100).toFixed(2) : 0;
+  document.getElementById("conversion").textContent = conversion + "%";
+}
+
+function resetStats() {
+  if(confirm("Réinitialiser toutes les statistiques ?")) {
+    localStorage.clear();
+    loadAnalytics();
+  }
+}
+
+loadAnalytics();
+loadCountries();
+
+
+
+function loadCountries() {
+  const container = document.getElementById("countries");
+  const countries = JSON.parse(localStorage.getItem("countries")) || {};
+
+  if (Object.keys(countries).length === 0) {
+    container.innerHTML = "Aucune donnée";
+    return;
+  }
+
+  container.innerHTML = Object.entries(countries)
+    .sort((a,b)=>b[1]-a[1])
+    .map(([country,count]) => `🌍 ${country} : <b>${count}</b>`)
+    .join("<br>");
+}
+</script>
+
+</body>
+</html>

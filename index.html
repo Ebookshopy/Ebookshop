@@ -1,0 +1,1348 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>EbookShop — Ebooks et Formations</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+<style>
+/* ==== STYLE GLOBAL ==== */
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Montserrat',sans-serif;}
+body{background:#1f3d2e;color:#fff;line-height:1.6;}
+.container{max-width:1200px;margin:0 auto;padding:0 20px;}
+
+/* ==== HEADER ==== */
+header{position:fixed;top:0;left:0;width:100%;background:rgba(0,0,0,0.65);backdrop-filter:blur(10px);border-bottom:2px solid #ffeb3b;z-index:1000;display:flex;justify-content:space-between;align-items:center;padding:14px 20px;flex-wrap:wrap;}
+.logo{font-family:'Playfair Display',serif;font-size:2em;font-weight:700;}
+nav ul{display:flex;list-style:none;align-items:center;flex-wrap:wrap;}
+nav li{margin-left:15px;}
+nav a{color:#fff;text-decoration:none;font-weight:700;letter-spacing:0.5px;transition:0.25s;}
+nav a:hover{color:#ffeb3b;}
+
+/* ==== CART ==== */
+#cartIcon{position:relative;background:#ffeb3b;color:#000;padding:12px 14px;border-radius:12px;font-size:1.1em;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.4);transition:0.2s;margin-left:10px;}
+#cartIcon:hover{transform:scale(1.05);}
+#cartCount{font-weight:700;margin-left:6px;}
+
+/* ==== HERO SECTION ==== */
+main{padding-top:120px;}
+.hero{background:linear-gradient(135deg, rgba(0,0,0,.55), rgba(0,0,0,.15));border-radius:22px;padding:34px 20px;margin:24px 0 18px;box-shadow:0 14px 30px rgba(0,0,0,.45);text-align:center;}
+.hero h1{font-family:'Playfair Display',serif;font-size:2.6em;margin-bottom:10px;}
+.hero p{max-width:860px;margin:0 auto 18px;font-size:1.1em;opacity:.95;}
+
+/* ==== CARDS ==== */
+.section-title{font-family:'Playfair Display',serif;font-size:2.1em;text-align:center;margin:14px 0;}
+.section-sub{max-width:920px;margin:0 auto 18px;text-align:center;opacity:.9;}
+
+.grid{display:flex;flex-wrap:wrap;gap:18px;justify-content:center;}
+
+.card{width:280px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);border-radius:18px;padding:16px;box-shadow:0 12px 24px rgba(0,0,0,.35);backdrop-filter:blur(8px);transition: transform .3s, box-shadow .3s;}
+.card:hover{transform:translateY(-6px);box-shadow:0 18px 36px rgba(0,0,0,.45);}
+.card h3{font-family:'Playfair Display',serif;font-size:1.35em;margin:8px 0;}
+.price{font-weight:800;margin:6px 0 10px;}
+
+.card-desc{font-size:.92em;opacity:.95;margin-bottom:8px;}
+.card-benefits{font-size:.85em;opacity:.9;margin-bottom:10px;}
+.card-benefits li{margin-left:18px;list-style:disc;}
+
+/* ==== BUTTON ==== */
+.btn{display:inline-block;padding:12px 18px;border-radius:999px;font-weight:800;text-decoration:none;cursor:pointer;background:#ffeb3b;color:#000;transition:transform .18s, background .18s;border:none;}
+.btn:hover{background:#fff;transform:scale(1.03);}
+
+/* ==== INFO PAGE ==== */
+#infoOverlay{position:fixed;inset:0;background:rgba(0,0,0,.92);display:none;justify-content:center;align-items:center;padding:20px;z-index:3000;}
+.info-panel{width:min(620px,95%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;backdrop-filter:blur(10px);max-height:90vh;overflow-y:auto;text-align:left;}
+.info-panel h2{font-family:'Playfair Display';}
+.info-panel ul{margin-left:50px;list-style:disc;}
+.closeInfo{margin-top:20px;background:#fff;color:#000;}
+
+/* ==== PACK ==== */
+.pack-section{margin:30px 0;padding:20px;background:rgba(255,255,255,.08);border-radius:18px;text-align:center;}
+
+/* ==== OVERLAYS ==== */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.92);display:none;justify-content:center;align-items:center;padding:20px;z-index:2000;}
+.panel{width:min(520px,95%);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:18px;padding:20px;backdrop-filter:blur(10px);text-align:center;overflow-y:auto;max-height:90vh;}
+
+#cartList{list-style:none;padding:0;margin-bottom:12px;}
+
+footer{margin-top:46px;text-align:center;padding:18px;background:rgba(0,0,0,.6);}
+footer a{color:#ffeb3b;text-decoration:none;}
+footer a:hover{text-decoration:underline;}
+.small{font-size:.9em;opacity:.9;margin-top:6px;}
+
+/* ===== AGRANDIR LES CHAMPS DE PAIEMENT ===== */
+#paymentForm input {
+  width: 100%;
+  padding: 16px;               /* ➜ augmente la hauteur */
+  font-size: 1.15em;           /* ➜ texte plus grand */
+  border-radius: 12px;
+  margin-bottom: 14px;
+  border: none;
+}
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="logo">📚 EbookShop </div>
+  <nav>
+    <ul>
+      <li><a href="#home">Accueil</a></li>
+      <li><a href="#ebooks">Ebooks</a></li>
+      <li><a href="#products">Formations</a></li>
+    </ul>
+  </nav>
+  <div id="cartIcon">🛒 <span id="cartCount">0</span></div>
+</header>
+
+<main>
+
+
+
+
+<section id="home" class="hero">
+  <h1>Ebooks et Formations</h1>
+  <p>Debute aujourd'hui et génère tes premiers revenus en ligne avec nos e-books et formations la difference cela marche toujours tant que tu suis biens la procedure . Choisis ton pack et commence à appliquer la méthode KMF dès aujourd’hui !</p>
+</section>
+
+ 
+
+  <div class="section-sub">Garantie Suivi Spécial — Sans risque 
+Un accompagnement spécial et personnalisé jusqu’à ce que tu comprennes et appliques la méthode.
+</div>
+
+<!-- Section Ebook Compacte -->
+<div style="max-width: 320px; margin: 40px auto; font-family: 'Montserrat', sans-serif;">
+    <div style="
+        border-radius: 15px;
+        overflow: hidden;
+        background: rgba(255,255,255,0.05);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: transform 0.3s, box-shadow 0.3s;
+        padding: 0;">
+        
+        <!-- Image de couverture avec cadre fin -->
+        <img src="IMAGE7.jpg" alt="Couverture Ebook" style="
+            width: 100%;
+            display: block;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            border-radius: 0;">
+        
+        <!-- Contenu texte compact -->
+        <div style="padding: 15px; color: #fff;">
+            <h2 style="font-family: 'Playfair Display', serif; font-size: 18px; margin-bottom: 8px; color: #f1f1f1;">
+                produit vedette : Gagne 20€ a 350€ chaque semaine (Facilement)et être payer en virement paypal ou en crypto . 
+            </h2>
+            <p style="font-size: 13px; margin-bottom: 12px; color: #dcdcdc;">
+                Méthodes simples et rapides pour générer des revenus chaque semaine.
+            </p>
+
+            <!-- Prix avec réduction -->
+            <p style="font-size: 14px; margin-bottom: 15px;">
+                <span style="text-decoration: line-through; color: #bbb;">30€</span>
+                <span style="font-weight: bold; color: #ff6b6b; margin-left: 8px;">15€ (50% de réduction)</span>
+            </p>
+
+            <!-- Bouton Commander compact -->
+            <a href="index2.html" style="
+                display: inline-block;
+                background: linear-gradient(90deg, #2E8B57, #3CB371);
+                color: #fff;
+                padding: 10px 22px;
+                text-decoration: none;
+                font-size: 14px;
+                font-weight: 600;
+                border-radius: 50px;
+                transition: all 0.3s;">
+                Commander
+            </a>
+        </div>
+    </div>
+</div>
+
+<!-- Effets au survol -->
+<style>
+div[style*="backdrop-filter"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+}
+a:hover {
+    background: linear-gradient(90deg, #3CB371, #2E8B57);
+}
+</style>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+<!-- PRODUIT TENDANCE -->
+<section id="trending" class="grid" style="margin-bottom: 20px;">
+  <!-- La card tendance sera injectée ici par le script -->
+</section>
+
+<section id="ebooks">
+  <div class="section-title">Nos Ebooks</div>
+  <div class="section-sub">Mini descriptions + bénéfices inclus</div>
+  <div class="grid" id="ebooksGrid"></div>
+</section>
+  <div class="section-sub">Commence aujourd’hui. Si tu n’appliques rien, tu ne perds rien. Si tu appliques, tu changes tout.
+</div>
+
+<section id="products">
+  <div class="section-title">Nos Formations</div>
+  <div class="section-sub">Accélère tes résultats avec nos formations</div>
+  <div class="grid" id="productGrid"></div>
+</section>
+
+<section class="pack-section">
+  <h2>Pack Complet : Ebook + Formation</h2>
+  <p>Profite du pack complet pour chaque domaine.</p>
+  <div class="grid" id="packGrid"></div>
+</section>
+</main>
+
+<!-- PAGE D’INFORMATION -->
+<div id="infoOverlay">
+  <div class="info-panel">
+    <h2 id="infoTitle"></h2>
+    <p id="infoDesc"></p>
+    <h3>Avantages :</h3>
+    <ul id="infoBenefits"></ul>
+
+    <h3>Transformations :</h3>
+    <p id="infoTransform"></p>
+
+    <h3>Bonus offert :</h3>
+    <p>Mini-guide <b>PPTX</b> inclus gratuitement lors de l’achat.</p>
+
+    <button class="btn closeInfo">Fermer</button>
+  </div>
+</div>
+
+<!-- PANIER -->
+<div id="cartOverlay" class="overlay">
+  <div class="panel">
+    <h2>Panier 🛒</h2>
+    <ul id="cartList"></ul>
+    <div id="cartTotal"></div>
+    <button class="btn" id="checkoutBtn">Passer au paiement</button>
+    <button class="btn" id="closeCart" style="background:#fff;color:#000;">Fermer</button>
+  </div>
+</div>
+
+<!-- PAGE DE PAIEMENT -->
+<!-- Résumé du panier -->
+<div id="paymentCartSummary" style="
+    background: rgba(255,255,255,0.1);
+    padding: 14px;
+    border-radius: 12px;
+    margin-bottom: 18px;
+    max-height: 200px;
+    overflow-y: auto;
+">
+    <h3>Résumé de votre panier :</h3>
+    <ul id="paymentCartList"></ul>
+    <p id="paymentCartTotal" style="font-weight:700;"></p>
+</div>
+<div id="paymentOverlay" class="overlay">
+  <div class="panel">
+    <h2>Paiement Crypto</h2>
+    <form id="paymentForm">
+      <input type="text" id="clientName" placeholder="Nom complet" required/>
+      <input type="email" id="clientEmail" placeholder="Email" required/>
+      <input type="text" id="clientWhatsapp" placeholder="Numéro WhatsApp" required/>
+
+<input type="text" id="clientpanier" placeholder="Résumé du panier" required readonly/>
+
+
+
+      <label>Choisis ta crypto :</label>
+      <div id="cryptoContainer" style="display:flex;gap:12px;flex-wrap:wrap;margin:12px 0;"></div>
+
+      <div id="selectedCryptoInfo" style="margin:12px 0;display:none;">
+        <div id="cryptoAmountDisplay" style="margin-bottom:6px;font-weight:700;"></div>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <input type="text" id="cryptoAddressDisplay" readonly style="flex:1;padding:6px;border-radius:8px;border:none;"/>
+          <button type="button" class="btn" id="copyAddressBtn" style="padding:6px 10px;">Copier</button>
+        </div>
+      </div>
+
+      <label>Après paiement, colle ton TXID :</label>
+      <input type="text" id="txidInput" placeholder="TXID"/>
+      <button type="submit" class="btn">Confirmer le paiement</button>
+    </form>
+
+    <button class="btn" id="closePayment" style="margin-top:12px;background:#fff;color:#000;">Fermer</button>
+  </div>
+</div>
+
+<!-- POPUP BONUS GRATUIT -->
+<style>
+  #bonusPopup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 3000;
+    padding: 20px;
+  }
+
+  #bonusBox {
+    background: #ffffff10;
+    border: 1px solid #ffffff30;
+    backdrop-filter: blur(12px);
+    border-radius: 18px;
+    width: min(430px, 90%);
+    padding: 25px;
+    text-align: center;
+    color: white;
+    animation: fadeIn 0.5s ease;
+  }
+
+  #bonusBox h2 {
+    font-size: 1.7em;
+    margin-bottom: 10px;
+    font-family: 'Playfair Display', serif;
+  }
+
+  #bonusBox p {
+    opacity: 0.95;
+    margin-bottom: 18px;
+    line-height: 1.5;
+  }
+
+  #bonusDownload {
+    background: #ffeb3b;
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: #000;
+    font-weight: 800;
+    text-decoration: none;
+    display: inline-block;
+    transition: 0.2s;
+  }
+
+  #bonusDownload:hover {
+    background: #fff;
+    transform: scale(1.05);
+  }
+
+  #bonusClose {
+    margin-top: 16px;
+    background: #fff;
+    color: #000;
+    padding: 10px 18px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 700;
+    cursor: pointer;
+  }
+
+  @keyframes fadeIn {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+</style>
+
+<!-- BOUTON POUR OUVRIR LE BONUS -->
+<div style="text-align:center; margin:40px 0;">
+  <button id="openBonus" 
+  style="background:#ffeb3b;color:#000;padding:14px 22px;border-radius:14px;font-weight:800;font-size:1.1em;cursor:pointer;">
+    🎁 Bonus Gratuit : Mini Guide
+  </button>
+</div>
+
+<!-- POPUP -->
+<div id="bonusPopup">
+  <div id="bonusBox">
+    <h2>🎁 Bonus Gratuit</h2>
+    <p>Voici ton mini-guide exclusif pour t’aider à démarrer et comprendre les bases avant même d’acheter une formation.</p>
+    <p><strong>Ce guide contient :</strong><br>
+    • Les fondamentaux<br>
+    • Des stratégies simples<br>
+    • Un plan d’action de démarrage</p>
+
+    <!-- 🔥 LIEN VERS TON FICHIER À CHANGER ICI -->
+    <a id="bonusDownload" href="bonus-mini-guide.pdf" download>
+      Télécharger maintenant
+    </a>
+
+    <button id="bonusClose">Fermer</button>
+  </div>
+</div>
+
+<!-- ICÔNE ASSISTANT / FAQ JAUNE CLAIR -->
+<div id="ai-assistant">🤖</div>
+
+<!-- POPUP FAQ -->
+<div id="ai-popup">
+  <div id="ai-header">Assistant IA <span id="ai-close">✖</span></div>
+  <div id="ai-content">
+    <p>Bonjour ! Pose-moi une question sur nos ebooks ou formations :</p>
+    <input type="text" id="ai-input" placeholder="Écris ta question ici..." />
+    <button id="ai-send">Envoyer</button>
+    <div id="ai-response"></div>
+  </div>
+</div>
+
+<!-- STYLES -->
+<style>
+/* Icône flottante */
+#ai-assistant {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 60px;
+  height: 60px;
+  background-color: #ffeb3b; /* jaune clair lumineux */
+  color: #062d1b; /* texte sombre pour contraste */
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  z-index: 9999;
+  transition: transform 0.2s;
+}
+#ai-assistant:hover { transform: scale(1.1); }
+
+/* Popup */
+#ai-popup {
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
+  width: 300px;
+  background-color: #FFFDE7; /* fond jaune très clair */
+  border-radius: 12px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.3);
+  display: none;
+  z-index: 9999;
+  font-family: sans-serif;
+}
+
+#ai-header {
+  background-color: #FFF176; /* jaune clair lumineux */
+  color: #062d1b;
+  padding: 10px;
+  border-top-left-radius: 12px;
+  border-top-right-radius: 12px;
+  font-weight: bold;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+#ai-close { cursor: pointer; }
+
+#ai-content { padding: 10px; }
+#ai-content input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 8px;
+}
+#ai-content button {
+  width: 100%;
+  padding: 8px;
+  background-color: #FFEE58; /* jaune clair */
+  color: #062d1b;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+#ai-content button:hover {
+  background-color: #FFEE58; /* jaune légèrement plus foncé au survol */
+}
+
+#ai-response { margin-top: 10px; color: #062d1b; font-weight: 500; }
+</style>
+
+<!-- JS -->
+<script>
+const assistant = document.getElementById('ai-assistant');
+const popup = document.getElementById('ai-popup');
+const closeBtn = document.getElementById('ai-close');
+const sendBtn = document.getElementById('ai-send');
+const input = document.getElementById('ai-input');
+const response = document.getElementById('ai-response');
+
+// Ouvrir le popup
+assistant.addEventListener('click', () => { popup.style.display = 'block'; });
+
+// Fermer le popup
+closeBtn.addEventListener('click', () => { popup.style.display = 'none'; });
+
+// Réponses automatiques simples
+sendBtn.addEventListener('click', () => {
+  const question = input.value.toLowerCase();
+  if(question.includes("prix")) {
+    response.innerHTML = "Nos ebooks commencent à 15€, et les packs complets offrent une remise.";
+  } else if(question.includes("livraison") || question.includes("recevoir")) {
+    response.innerHTML = "Après paiement, vous recevez immédiatement vos ebooks ou formations en ligne.";
+  } else if(question.includes("méthode") || question.includes("odb")) {
+    response.innerHTML = "La méthode KMF vous guide étape par étape pour générer vos premiers revenus.";
+  } else {
+    response.innerHTML = "Merci pour votre question ! Nous vous répondrons rapidement.";
+  }
+});
+
+
+// ===== ANALYTICS SIMPLE =====
+function initAnalytics() {
+  if (!localStorage.getItem("visits")) {
+    localStorage.setItem("visits", 0);
+    localStorage.setItem("addToCart", 0);
+    localStorage.setItem("sales", 0);
+    localStorage.setItem("revenue", 0);
+  }
+
+  // +1 visite par session
+  let visits = parseInt(localStorage.getItem("visits"));
+  localStorage.setItem("visits", visits + 1);
+}
+initAnalytics();
+
+// Track ajout panier
+function trackAddToCart() {
+  let count = parseInt(localStorage.getItem("addToCart"));
+  localStorage.setItem("addToCart", count + 1);
+}
+
+// Track vente
+function trackSale(amount) {
+  let sales = parseInt(localStorage.getItem("sales"));
+  let revenue = parseFloat(localStorage.getItem("revenue"));
+
+  localStorage.setItem("sales", sales + 1);
+  localStorage.setItem("revenue", revenue + amount);
+}
+
+
+// ===== TRACKING PAYS =====
+async function trackCountry() {
+  try {
+    const res = await fetch("https://ipapi.co/json/");
+    const data = await res.json();
+    const country = data.country_name || "Inconnu";
+
+    let countries = JSON.parse(localStorage.getItem("countries")) || {};
+
+    countries[country] = (countries[country] || 0) + 1;
+
+    localStorage.setItem("countries", JSON.stringify(countries));
+  } catch (e) {
+    console.log("Pays non détecté");
+  }
+}
+
+trackCountry();
+
+</script>
+
+<!-- PREUVES (section) -->
+<section class="proofs" id="preuves">
+  <div class="container">
+    <div class="badge">📸 Preuves réelles</div>
+
+    <h2>Preuves réelles — Résultats obtenus</h2>
+
+    <p class="lead">
+      Voici des captures réelles montrant les résultats obtenus grâce à nos méthodes.<br>
+      Les photos affichent des gains, conversations, statistiques ou preuves d’application.<br>
+      Elles sont <strong>100 % authentiques</strong>, floutées uniquement pour protéger la confidentialité.
+    </p>
+
+    <ul class="bullets">
+      <li>👉 Ces résultats prouvent que la méthode <strong>KMF</strong> fonctionnent réellement.</li>
+      <li>👉 Si tu appliques correctement les étapes, tu peux obtenir les mêmes.</li>
+    </ul>
+
+    <div class="gallery">
+      
+<!-- STYLES (à mettre dans <style> ou ton fichier CSS) -->
+<style>
+  .proofs { padding: 48px 16px; background:  #062d1b; color: #f4f6ff; }
+  .proofs .container { max-width: 1000px; margin: 0 auto; }
+
+  .proofs .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 999px;
+    background: rgba(255,255,255,.08);
+    font-weight: 700;
+    letter-spacing: .2px;
+  }
+
+  .proofs h2 { margin: 14px 0 10px; font-size: 1.65rem; line-height: 1.15; }
+  .proofs .lead { margin: 0 0 14px; opacity: .95; line-height: 1.55; }
+
+  .proofs .bullets { margin: 0 0 18px; padding-left: 18px; line-height: 1.6; }
+  .proofs .bullets li { margin: 6px 0; }
+
+  .gallery {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+  }
+
+  .shot {
+    background: rgba(255,255,255,.08);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .shot img { width: 100%; height: 170px; object-fit: cover; display: block; }
+  .shot figcaption { padding: 10px 10px 12px; font-size: .92rem; opacity: .92; }
+
+  /* mobile */
+  @media (max-width: 760px) {
+    .gallery { grid-template-columns: 1fr; }
+    .proofs { padding: 38px 14px; }
+  }
+</style>
+</section>
+
+
+
+<script>
+
+function updateClientPanierInput() {
+    const input = document.getElementById("clientpanier");
+    if(!input) return;
+
+    if(cart.length === 0){
+        input.value = "";
+        return;
+    }
+
+    let summary = "";
+    let total = 0;
+
+    cart.forEach(item => {
+        const basePrice = PRODUCTS.find(p => p.id === item.id).price;
+        const price = item.type==="pack" ? basePrice*1.5 : item.type==="formation" ? basePrice*1.2 : basePrice;
+        total += price;
+        summary += `${INFO[item.id][item.type].title} (${item.type}) - ${price.toFixed(2)} € | `;
+    });
+
+    summary += `Total : ${total.toFixed(2)} €`;
+    input.value = summary;
+}
+
+// Appelle cette fonction quand on ouvre le paiement
+checkoutBtn.addEventListener("click", () => {
+    if(cart.length === 0){ alert("Panier vide."); return; }
+
+    updatePaymentSummary();
+    updateClientPanierInput(); // <-- Remplit l'input ici
+
+    paymentOverlay.style.display = "flex";
+    cartOverlay.style.display = "none";
+
+    populateCryptoIcons();
+
+trackAddToCart();
+
+
+
+});
+
+
+
+
+
+
+
+  const bonusPopup = document.getElementById("bonusPopup");
+  const openBonus = document.getElementById("openBonus");
+  const closeBonus = document.getElementById("bonusClose");
+
+  openBonus.addEventListener("click", ()=> bonusPopup.style.display = "flex");
+  closeBonus.addEventListener("click", ()=> bonusPopup.style.display = "none");
+
+  // Fermer en cliquant en dehors du popup
+  bonusPopup.addEventListener("click", function(e){
+    if(e.target === bonusPopup){
+      bonusPopup.style.display = "none";
+    }
+  });
+
+document.getElementById("successClose").addEventListener("click", () => {
+  document.getElementById("successPopup").style.display = "none";
+});
+</script>
+<!-- CARROUSEL PREUVES / AVIS / RESULTATS -->
+<style>
+  .proof-slider {
+    width: 100%;
+    max-width: 500px;
+    margin: 40px auto;
+    overflow: hidden;
+    border-radius: 15px;
+    position: relative;
+  }
+
+  .proof-slide-container {
+    display: flex;
+    width: 100%;
+    transition: transform 0.8s ease-in-out;
+  }
+
+  .proof-slide {
+    min-width: 100%;
+    transform: scale(0.95);
+    opacity: 0.6;
+    transition: all 0.5s ease;
+  }
+
+  .proof-slide.active {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .proof-slide img {
+    width: 100%;
+    border-radius: 15px;
+  }
+
+  /* Effet d'apparition "décollage" */
+  .proof-slide.active img {
+    animation: pop 0.6s ease;
+  }
+
+  @keyframes pop {
+    0% { transform: scale(0.9) translateY(10px); opacity: 0; }
+    100% { transform: scale(1) translateY(0); opacity: 1; }
+  }
+</style>
+
+<div class="proof-slider">
+  <div class="proof-slide-container" id="proofSlider">
+    <div class="proof-slide active">
+      <img src="IMAGE1.jpg" alt="Preuve 1">
+    </div>
+    <div class="proof-slide">
+      <img src="IMAGE2.jpg" alt="Preuve 2">
+    </div>
+    <div class="proof-slide">
+      <img src="IMAGE3.jpg" alt="Preuve 3">
+    </div>
+  </div>
+</div>
+
+<script>
+  let proofIndex = 0;
+  const proofSlides = document.querySelectorAll(".proof-slide");
+  const proofSlider = document.getElementById("proofSlider");
+
+  function nextProof() {
+    proofSlides[proofIndex].classList.remove("active");
+    proofIndex = (proofIndex + 1) % proofSlides.length;
+    proofSlides[proofIndex].classList.add("active");
+    proofSlider.style.transform = `translateX(-${proofIndex * 100}%)`;
+  }
+
+  setInterval(nextProof, 2500); // Change d’image toutes les 2.5 sec
+</script>
+
+
+<!-- TITRE AMÉLIORÉ -->
+<h2 class="testimonials-title">💬 Témoignages</h2>
+
+<style>
+.testimonials-title {
+  font-size: 3rem;           /* beaucoup plus gros que h4 */
+  font-weight: 900;          /* gras extrême pour impact */
+  color: #ffeb3b;            /* vert pur */
+  text-align: center;        /* centré sur la page */
+  margin: 40px 0 20px 0;     /* espace au-dessus et en dessous */
+  text-shadow: 2px 2px 5px rgba(0,0,0,0.3); /* effet léger pour faire ressortir */
+  font-family: 'Montserrat', sans-serif; /* police moderne */
+  letter-spacing: 1px;
+}
+</style>
+
+
+
+
+
+<!-- TÉMOIGNAGES DÉFILANTS -->
+<section class="testimonials-slider">
+  <div class="slider-track">
+    <div class="slide">
+      <p>“J’ai appliqué la méthode ODB produit phare pendant 7 jours et j’ai fait mes premiers 20€ alors que je n'avais rien au début . Ce n’est pas énorme, mais ça marche vraiment.”</p>
+      <span>— Client débutant</span>
+    </div>
+
+    <div class="slide">
+      <p>“Je pensais que c’était compliqué. Finalement non. Le système KMF m’a donné ma première vente automatique en 24h.”</p>
+      <span>— Utilisateur confirmé</span>
+    </div>
+
+    <div class="slide">
+      <p>“J’ai créé mon premier modèle IA en 1h. Les scripts fournis font vraiment la diff. J’ai commencé à gagner dès la première semaine.”</p>
+      <span>— Manager OF IA débutant</span>
+    </div>
+
+    <div class="slide">
+      <p>“La formation est mieux que ce que j’ai vu ailleurs. Les exemples réels m’ont aidé à comprendre comment faire mes propres systèmes.”</p>
+      <span>— Apprenant MD</span>
+    </div>
+
+    <div class="slide">
+      <p>“J’avais déjà essayé seul sans résultats. La formation m’a montré EXACTEMENT comment structurer mon management OF IA.”</p>
+      <span>— Nouveau manager IA</span>
+    </div>
+
+    <div class="slide">
+      <p>“Le pack complet, c’est le meilleur choix. J’ai commencé à générer tous les jours après 10 jours d’application.”</p>
+      <span>— Acheteur Pack Pro</span>
+    </div>
+  </div>
+</section>
+
+
+
+
+<footer>
+  Pourquoi choisir nos ebooks et formations ?
+  Nos ebooks te donnent les bases, nos formations te montrent comment les appliquer.
+  Avec le pack complet, tu combines théorie et pratique.
+  <p>&copy; 2025 EbookShop — Tous droits réservés.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+
+
+
+<!-- STYLES -->
+<style>
+.testimonials-slider {
+  overflow: hidden;
+  background: #062d1b; /* vert sombre pour le fond */
+  padding: 40px 0;
+  color: #d4f0c6; /* texte vert clair pour contraste */
+  font-family: sans-serif;
+}
+
+.slider-track {
+  display: flex;
+  width: calc(6 * 300px); /* nombre de slides * largeur d'une slide */
+  animation: scroll 30s linear infinite;
+}
+
+.slide {
+  flex: 0 0 300px;
+  margin-right: 20px;
+  background: rgba(20, 60, 30, 0.8); /* carte vert foncé légèrement transparent */
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 12px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.slide p {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+
+.slide span {
+  font-weight: 700;
+  opacity: 0.85;
+  font-size: 0.85rem;
+  color: #bce5a1; /* vert clair légèrement plus vif pour l'auteur */
+}
+
+/* animation de défilement */
+@keyframes scroll {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .slide { flex: 0 0 250px; }
+}
+
+@media (max-width: 600px) {
+  .slide { flex: 0 0 200px; }
+}
+</style>
+
+<!-- STYLES -->
+<style>
+  .testimonials { padding: 50px 16px; background: #0b1020; color: #f4f6ff; }
+  .testimonials .container { max-width: 1100px; margin: 0 auto; }
+  .testimonials h2 { font-size: 2rem; margin-bottom: 12px; }
+  .testimonials .intro { margin-bottom: 30px; opacity: 0.9; }
+
+  .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+
+  .card { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18); border-radius: 12px; padding: 20px; transition: transform .2s; }
+  .card:hover { transform: translateY(-4px); }
+  .quote { font-size: 0.95rem; line-height: 1.6; margin-bottom: 12px; }
+  .author { font-weight: 700; opacity: 0.8; font-size: 0.85rem; }
+
+  @media (max-width: 900px) {
+    .cards { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .cards { grid-template-columns: 1fr; }
+  }
+</style>
+
+
+<script>
+emailjs.init("MMO4RURIJnsEOY140");
+
+const PRODUCTS = [
+  {id:"marketing", name:"Marketing Digital", price:39.99},
+  {id:"ofm-ia", name:"OFM IA", price:69.99}
+];
+
+/* ==== DESCRIPTIONS + BENEFICES ==== */
+const INFO = {
+  "marketing": {
+    ebook: {
+      title:"Ebook Marketing Digital",
+      desc:"Le guide parfait pour commencer à gagner de l’argent en ligne.",
+      benefits:[
+        "Comprendre les bases du marketing moderne",
+        "Créer ton premier système automatisé",
+        "Stratégies ODB + KMF prêtes à l’emploi"
+      ],
+      transform:"Tu seras capable de lancer tes premiers revenus dans les 48h."
+    },
+    formation:{
+      title:"Formation Marketing Digital",
+      desc:"La formation la plus simple pour débuter rapidement.",
+      benefits:[
+        "Méthodes avancées",
+        "Exemples réels",
+        "Stratégies complètes"
+      ],
+      transform:"Tu passes de débutant à intermédiaire capable de créer des tunnels rentables."
+    },
+    pack:{
+      title:"Pack Marketing Complet",
+      desc:"La combinaison parfaite pour passer à l’action.",
+      benefits:[
+        "Accès total",
+        "Méthodes + Applications",
+        "Résultats rapides"
+      ],
+      transform:"Tu peux commencer à monétiser ton activité immédiatement."
+    }
+  },
+
+  "ofm-ia":{
+    ebook:{
+      title:"Ebook OFM IA",
+      desc:"Crée ton modèle IA et génère des revenus sur OnlyFans.",
+      benefits:[
+        "Création personnage IA",
+        "Automatisation",
+        "Scripts & techniques"
+      ],
+      transform:"Tu seras capable de lancer ton premier modèle IA complet."
+    },
+    formation:{
+      title:"Formation OFM IA",
+      desc:"Formation complète pour devenir manager OF IA.",
+      benefits:[
+        "Setup complet",
+        "Structure professionnelle",
+        "Client acquisition"
+      ],
+      transform:"Tu peux lancer une agence OF IA rentable."
+    },
+    pack:{
+      title:"Pack OFM IA Complet",
+      desc:"Le pack complet + bonus spécial.",
+      benefits:[
+        "Ebook + Formation",
+        "Systèmes clonables",
+        "Bonus PPTX IA"
+      ],
+      transform:"Tu es capable de créer un business OF IA rentable en 72h."
+    }
+  }
+};
+
+const ADDRESSES={ETH:"0xd4Fbc12bA94496eB13D968e575C9f03380bE4F48",BTC:"bc1qsyn0jp2nzmp2kx65kscnttmhvruq5v2hl0jwra",SOL:"3FVzZ3W2HZ7PaHN9EoWMeA5Pm4A94GyG7R6QWpYiUGRb",TRX:"TKHvwB5vDXAUJwYDZ8SJeYifZZX33fP6PA"};
+const RATES={ETH:1500,BTC:25000,SOL:100,TRX:0.06};
+
+let cart=[];
+
+
+
+
+
+
+
+/* ===== RENDU DES CARDS ===== */
+
+
+
+
+
+function renderProducts(){
+  ebooksGrid.innerHTML=""; productGrid.innerHTML=""; packGrid.innerHTML="";
+
+  PRODUCTS.forEach(p=>{
+    const types=[
+      {label:"Ebook",type:"ebook",price:p.price},
+      {label:"Formation",type:"formation",price:p.price*1.2},
+      {label:"Pack Complet",type:"pack",price:p.price*1.5}
+    ];
+
+    types.forEach(t=>{
+      const info=INFO[p.id][t.type];
+
+      const card=document.createElement("div");
+      card.className="card";
+
+      card.innerHTML=`
+        <h3>${p.name} ${t.type==="pack"?"- Pack":""}</h3>
+
+        <div class="card-desc">${info.desc}</div>
+
+        <ul class="card-benefits">
+          ${info.benefits.map(b=>`<li>${b}</li>`).join("")}
+        </ul>
+
+        <div class="price">${t.price.toFixed(2)} €</div>
+
+        <button class="btn infoBtn" data-id="${p.id}" data-type="${t.type}">Plus d’infos</button>
+        <br><br>
+        <button class="btn addCart" data-id="${p.id}" data-type="${t.type}">Ajouter au panier</button>
+      `;
+
+      if(t.type==="ebook") ebooksGrid.appendChild(card);
+      else if(t.type==="formation") productGrid.appendChild(card);
+      else packGrid.appendChild(card);
+    });
+  });
+
+  /* BTN INFOS */
+  document.querySelectorAll(".infoBtn").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      let id=btn.dataset.id;
+      let type=btn.dataset.type;
+      openInfo(id,type);
+    });
+  });
+
+  /* BTN PANIER */
+  document.querySelectorAll(".addCart").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      cart.push({id:btn.dataset.id,type:btn.dataset.type});
+      cartCount.textContent = cart.length;
+      alert("Ajouté au panier !");
+      renderCartList();
+    });
+  });
+}
+
+/* ===== PAGE INFO ===== */
+function openInfo(id,type){
+  const data=INFO[id][type];
+  document.getElementById("infoTitle").textContent=data.title;
+  document.getElementById("infoDesc").textContent=data.desc;
+  document.getElementById("infoTransform").textContent=data.transform;
+  document.getElementById("infoBenefits").innerHTML=data.benefits.map(b=>`<li>${b}</li>`).join("");
+  document.getElementById("infoOverlay").style.display="flex";
+}
+
+document.querySelector(".closeInfo").addEventListener("click",()=>{
+  document.getElementById("infoOverlay").style.display="none";
+});
+
+/* ===== PANIER ===== */
+function renderCartList(){
+  cartList.innerHTML="";
+  let total=0;
+
+  cart.forEach((item,index)=>{
+    const base=PRODUCTS.find(x=>x.id===item.id).price;
+    const price=item.type==="pack"?base*1.5:item.type==="formation"?base*1.2:base;
+    total+=price;
+
+    const li=document.createElement("li");
+    li.innerHTML=`
+      ${INFO[item.id][item.type].title} - ${price.toFixed(2)}€
+      <button class="btn" style="padding:4px 8px;background:red;color:#fff;" onclick="removeCartItem(${index})">X</button>
+    `;
+    cartList.appendChild(li);
+  });
+
+  cartTotal.textContent="Total : "+total.toFixed(2)+" €";
+}
+
+function removeCartItem(i){
+  cart.splice(i,1);
+  cartCount.textContent=cart.length;
+  renderCartList();
+}
+
+
+
+
+
+
+
+
+/* ===== NAVIGATION ===== */
+document.querySelectorAll('nav a').forEach(link=>{
+  link.addEventListener('click',e=>{
+    e.preventDefault();
+    document.querySelector(link.getAttribute('href')).scrollIntoView({behavior:'smooth'});
+  });
+});
+
+cartIcon.addEventListener("click",()=>{cartOverlay.style.display="flex";renderCartList();});
+closeCart.addEventListener("click",()=>cartOverlay.style.display="none");
+
+/* ====== PAIEMENT ====== */
+
+function updatePaymentSummary() {
+    const list = document.getElementById("paymentCartList");
+    const totalDisplay = document.getElementById("paymentCartTotal");
+    list.innerHTML = ""; // vide avant d’ajouter
+    let total = 0;
+
+    cart.forEach(item => {
+        const base = PRODUCTS.find(x => x.id === item.id).price;
+        const price = item.type === "pack" ? base*1.5 : item.type === "formation" ? base*1.2 : base;
+        total += price;
+
+        const li = document.createElement("li");
+        li.textContent = `${INFO[item.id][item.type].title} - ${price.toFixed(2)} €`;
+        list.appendChild(li);
+    });
+
+    totalDisplay.textContent = "Total : " + total.toFixed(2) + " €";
+}
+
+checkoutBtn.addEventListener("click", () => {
+    if(cart.length === 0){ 
+        alert("Panier vide."); 
+        return; 
+    }
+
+    updatePaymentSummary(); // <-- AJOUTE CETTE LIGNE
+
+    paymentOverlay.style.display = "flex"; 
+    cartOverlay.style.display = "none";
+
+    populateCryptoIcons();
+});
+
+
+closePayment.addEventListener("click",()=>paymentOverlay.style.display="none");
+
+function populateCryptoIcons(){
+  cryptoContainer.innerHTML="";
+  selectedCryptoInfo.style.display="none";
+
+  let total=0;
+  cart.forEach(item=>{
+    const base=PRODUCTS.find(x=>x.id===item.id).price;
+    total+= item.type==="pack"?base*1.5:item.type==="formation"?base*1.2:base;
+  });
+
+  for(const [crypto,rate] of Object.entries(RATES)){
+    const amount=(total/rate).toFixed(6);
+
+    const btn=document.createElement("button");
+    btn.className="btn";
+    btn.style.padding="10px";
+    btn.style.display="flex";
+    btn.style.flexDirection="column";
+    btn.style.alignItems="center";
+
+    btn.innerHTML=`
+      <img src="https://cryptoicons.org/api/icon/${crypto.toLowerCase()}/64" style="width:36px;">
+      <span>${crypto}</span>
+    `;
+
+    btn.addEventListener("click",()=>{
+      selectedCrypto=crypto;
+      cryptoAmountDisplay.textContent=`Montant : ${amount} ${crypto}`;
+      cryptoAddressDisplay.value=ADDRESSES[crypto];
+      selectedCryptoInfo.style.display="block";
+    });
+
+    cryptoContainer.appendChild(btn);
+  }
+}
+
+copyAddressBtn.addEventListener("click",()=>{
+  cryptoAddressDisplay.select();
+  document.execCommand("copy");
+  alert("Adresse copiée !");
+});
+
+
+
+
+function fillClientPanier() {
+    const cartText = cart.map(item => INFO[item.id][item.type].title).join(" / ");
+    let total = 0;
+    cart.forEach(item => {
+        const base = PRODUCTS.find(p => p.id === item.id).price;
+        total += item.type === "pack" ? base*1.5 : item.type === "formation" ? base*1.2 : base;
+    });
+
+    clientpanier.value = `
+Nom : ${clientName.value}
+Email : ${clientEmail.value}
+WhatsApp : ${clientWhatsapp.value}
+Crypto : ${selectedCrypto}
+Adresse : ${ADDRESSES[selectedCrypto]}
+TXID : ${txidInput.value}
+
+--- PANIER ---
+${cartText}
+Total : ${total.toFixed(2)} €
+`;
+}
+
+
+
+
+
+
+
+paymentForm.addEventListener("submit",e=>{
+  e.preventDefault();
+
+  const name=clientName.value;
+  const mail=clientEmail.value;
+  const msg=txidInput.value;
+
+  if(!selectedCrypto || !msg){alert("Complète tout.");return;}
+
+  let items="";
+  let total=0;
+
+  cart.forEach(item=>{
+    const base=PRODUCTS.find(x=>x.id===item.id).price;
+    const price=item.type==="pack"?base*1.5:item.type==="formation"?base*1.2:base;
+    total+=price;
+    items+=INFO[item.id][item.type].title+" / ";
+  });
+
+  fillClientPanier(); // <-- ajoute ça ici
+
+trackAddToCart();
+
+
+emailjs.send("service_cqabxkm","template_vjstk32",{
+    client_name:name, client_email:mail,
+    cart_summary:items,
+    cart_total:total+" €",
+    txid:msg,
+    crypto:selectedCrypto,
+   clientpanier:clientpanier.value,
+crypto_address:ADDRESSES[selectedCrypto]
+ 
+
+}).then(()=>{
+    alert("Paiement confirmé !\n\n📩 Vous allez recevoir un email dans quelques instants.");
+    cart = [];
+    cartCount.textContent = "0";
+    paymentOverlay.style.display = "none";
+});
+});
+
+renderProducts();
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+</div>
+
+<!-- POPUP FINAL ACHAT RÉUSSI -->
+<div id="successPopup" style="
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.85);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 4000;
+">
+  <div style="
+    background: #ffffff15;
+    backdrop-filter: blur(12px);
+    padding: 30px;
+    border-radius: 18px;
+    width: min(420px, 90%);
+    text-align: center;
+    color: white;
+    animation: popIn 0.5s ease;
+  ">
+    <h2 style="font-family: 'Playfair Display', serif; font-size: 1.8em; margin-bottom: 10px;">
+      ✔️ Achat effectué
+    </h2>
+
+    <p style="opacity: 0.95; margin-bottom: 20px;">
+      Vous recevrez un mail contenant toutes vos informations<br>
+      dans quelques minutes.
+    </p>
+
+    <button id="successClose" style="
+      background: #ffeb3b;
+      color: #000;
+      padding: 12px 20px;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+    ">
+      Fermer
+    </button>
+  </div>
+</div>
+
+<style>
+@keyframes popIn {
+  0% { transform: scale(0.85); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+</style>
+
+
+</body>
+</html>
+
+
+
